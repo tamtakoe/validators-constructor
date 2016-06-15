@@ -1,0 +1,45 @@
+{
+  "name": "validators-constructor",
+  "description": "Constructor for library of validators",
+  "version": "0.0.0",
+  "author": {
+    "name": "Oleg Istomin",
+    "email": "tamtakoe@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tamtakoe/validators-constructor.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "validate",
+    "constructor",
+    "library",
+    "api"
+  ],
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "main": "./lib/validators-constructor.js",
+  "files": [
+    "dist/",
+    "lib/",
+    "LICENSE",
+    "README.md"
+  ],
+  "devDependencies": {
+    "babel-cli": "6.9.0",
+    "babel-preset-es2015": "6.9.0",
+    "browserify": "13.0.1",
+    "uglify-js": "2.6.2",
+    "chai": "3.5.0",
+    "mocha": "2.4.5"
+  },
+  "scripts": {
+    "test": "mocha 'tests/**/*.js' --timeout 5000",
+    "babelify": "babel src --presets es2015 --out-dir lib",
+    "browserify": "browserify ./lib/validators-constructor.js --standalone mapper --outfile dist/validators-constructor.js",
+    "minify": "uglifyjs dist/validators-constructor.js --output dist/validators-constructor.min.js",
+    "build": "npm run babelify && npm run browserify && npm run minify"
+  }
+}
