@@ -13,6 +13,8 @@
   "license": "MIT",
   "keywords": [
     "validate",
+    "validator",
+    "validators",
     "constructor",
     "library",
     "api"
@@ -38,7 +40,7 @@
   "scripts": {
     "test": "mocha 'tests/**/*.js' --timeout 5000",
     "babelify": "babel src --presets es2015 --out-dir lib",
-    "browserify": "browserify ./lib/validators-constructor.js --standalone mapper --outfile dist/validators-constructor.js",
+    "browserify": "browserify ./lib/validators-constructor.js --standalone Validators --outfile dist/validators-constructor.js",
     "minify": "uglifyjs dist/validators-constructor.js --output dist/validators-constructor.min.js",
     "build": "npm run babelify && npm run browserify && npm run minify"
   }
