@@ -1,8 +1,8 @@
 # validators-constructor
 Constructor for library of validators
 
-[![NPM version](https://img.shields.io/npm/v/validators-constructor.svg)](https://npmjs.org/package/require-me)
-[![Build status](https://img.shields.io/travis/tamtakoe/validators-constructor.svg)](https://travis-ci.org/tamtakoe/node-require-me)
+[![NPM version](https://img.shields.io/npm/v/validators-constructor.svg)](https://npmjs.org/package/validators-constructor)
+[![Build status](https://img.shields.io/travis/tamtakoe/validators-constructor.svg)](https://travis-ci.org/tamtakoe/validators-constructor)
 
 **Note:** This module works in browsers and Node.js >= 4.0
 
