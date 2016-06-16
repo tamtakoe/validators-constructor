@@ -20,8 +20,11 @@ const validators = Validators();
 
 validators.load({
     //Simple validator
-    maxLength: function(value, options) {
-        if ((isString(value) || isArray(value)) && value.length > options.comparedValue) {
+    maxLength: function(value, comparedValue, options) {
+        //if you use comparedValue you must specify the options in arguments, even if they do not use
+        //comparedValue also is available as options.comparedValue
+
+        if ((isString(value) || isArray(value)) && value.length > comparedValue) {
             return 'is too long (maximum is %{comparedValue})';
         }
     },
@@ -71,44 +74,47 @@ validators.range(7, {from: 1, to: 5, lessMessage: 'is too less', manyMessage: 'i
 
 ### Validators([options])
 
-**options** (Object)
-
-* `errorFormat` (Object) - Output format of error. By default:
+- **options** (`Object`)
+  * `errorFormat` (`Object`) - Output format of error. By default:
                            `{error: '%{validator}', message: '%{message}', $options: true, $origin: true}`
                            You can use %{template} syntax (by default). Next variables are enabled:
                            `validator` - validator name. f.e. `maxLength`;
                            `message` - string which validator returns if error;
                            options which you set in validator `options` if `$options: true`;
                            options which validator returns instead string (except options that end in `Message`) if `$origin: true`
-
-* `formatStr` (Function) - Custom template parser for error strings.
+  * `formatStr` (`Function`) - Custom template parser for error strings.
                            *get* `(templateStr, variablesObj)`
                            *return* `str`
 
-**return** (Validators) instance of Validators
+**return** (`Validators`) instance of Validators
 
 
 ### validators.add(validatorName, validatorFn)
 
-**validatorName** (String) - Name of validator in validators instance
+- **validatorName** (`String`) - Name of validator in validators instance
 
-**validatorFn** (Function|String) - Validator or alias
+- **validatorFn** (`Function` or `String`) - Validator or alias
 
 
 
 ### validators.load(validatorsObj)
 
-**validatorsObj** (Object) - Object has structure `{validatorName: validatorFn, ...}`
+- **validatorsObj** (`Object`) - Object has structure `{validatorName: validatorFn, ...}`
 
 
 
-### validatorFn(value, options)
+### validatorFn(value, [comparedValue], [options])
 
-**value** (Any) - Validated value
+- **value** (`Any`) - Validated value
 
-**options** (Any) - If is not Object you get option value in validator as `options.comparedValue`
+- **comparedValue** (`Any`) - value for comparison. User can set it as `options.comparedValue`
 
-**return** (Any) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value enable as `value`)
+- **options** (`Object`) - If you is not Object you get option value in validator as `options.comparedValue`
+  * `comparedValue` (`Any`) - Will be set if comparedValue is specified
+  * `parse` (`Function`) - Can change input value before validation
+  * (`Any`) - Any custom options
+
+- **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value enable as `value`)
 
 
 ## Tests

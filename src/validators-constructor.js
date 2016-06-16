@@ -83,12 +83,26 @@ Validators.prototype.formatMessage = function(message, values) {
  */
 Validators.prototype.add = function(name, validator) {
     if (typeof validator === 'string') {
-        this[name] = (value, options) => this[validator](value, options, name);
+        this[name] = (value, comparedValue, options) => this[validator](value, comparedValue, options, name);
 
     } else if (typeof validator === 'function') {
-        this[name] = (value, options, validatorName) => {
-            if (({}).toString.call(options) !== '[object Object]') { //options can be regExp or array
-                options = {comparedValue: options};
+        this[name] = (value, comparedValue, options, validatorName) => {
+            var noComparedValue;
+
+            if (validator.length < 3) {
+                noComparedValue = true;
+                options = comparedValue;
+            }
+
+            options = options || {};
+
+            if (options.hasOwnProperty('comparedValue')) {
+                noComparedValue = false;
+                comparedValue = options.comparedValue;
+            }
+
+            if (!noComparedValue) {
+                options.comparedValue = comparedValue;
             }
 
             options = Object.assign({}, this[name].defaultOptions, options);
@@ -96,8 +110,8 @@ Validators.prototype.add = function(name, validator) {
             if (typeof options.parse === 'function') {
                 value = options.parse(value);
             }
-
-            let error = validator(value, options);
+            
+            let error = noComparedValue ? validator(value, options) : validator(value, comparedValue, options);
 
             if (error) {
                 if (options.message) {
