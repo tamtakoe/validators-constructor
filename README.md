@@ -75,20 +75,17 @@ validators.range(7, {from: 1, to: 5, lessMessage: 'is too less', manyMessage: 'i
 ### Validators([options])
 
 - **options** (`Object`)
-  * `errorFormat` (`Object`) - Output format of error.
-                               By default: `{`
-                               `error: '%{validator}',`
-                               `message: '%{message}',`
-                               `$options: true,`
-                               `$origin: true}`
-                               You can use %{template} syntax (by default). Next variables are enabled:
-                               `validator` - validator name. f.e. `maxLength`;
-                               `message` - string which validator returns if error;
-                               options which you set in validator `options` if `$options: true`;
-                               options which validator returns instead string (except options that end in `Message`) if `$origin: true`
+  * `errorFormat` (`Object`) - Output format of error. By default:
+                           `{error: '%{validator}', message: '%{message}', $options: true, $origin: true}`
+                           You can use %{template} syntax (by default). Next variables are enabled:
+                           `validator` - validator name. f.e. `maxLength`;
+                           `message` - string which validator returns if error;
+                           options which you set in validator `options` if `$options: true`;
+                           options which validator returns instead string (except options that end in `Message`) if `$origin: true`
   * `formatStr` (`Function`) - Custom template parser for error strings.
-                               *get* `(templateStr, variablesObj)`
-                               *return* `str`
+                           *get* `(templateStr, variablesObj)`
+                           *return* `str`
+
 - **return** (`Validators`) instance of Validators
 
 
