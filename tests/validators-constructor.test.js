@@ -46,8 +46,8 @@ describe('validator', function() {
     });
 
     it('should validate', function() {
-        validators.add('isEqual', function(value, options) {
-            if (value !== options.comparedValue) {
+        validators.add('isEqual', function(value, comparedValue, options) {
+            if (value !== comparedValue) {
                 return 'not equal';
             }
         });
@@ -59,5 +59,40 @@ describe('validator', function() {
         expect(invalid.message).to.equal('not equal');
         expect(invalid.error).to.equal('isEqual');
         expect(invalid.comparedValue).to.equal(2);
+    });
+
+    it('options should be an object anyway', function() {
+        validators.add('isValid', function(value, options) {
+            expect(options).to.be.object;
+        });
+
+        validators.isValid();
+
+    });
+
+    it('should set comparedValue to options', function() {
+        validators.add('isEqual', function(value, comparedValue, options) {
+            if (value !== options.comparedValue) {
+                return 'not equal';
+            }
+        });
+
+        const valid = validators.isEqual(1, 1);
+        expect(valid).to.be.undefined;
+    });
+
+    it('should prepare value by parse', function() {
+        validators.add('isEqual', function(value, comparedValue, options) {
+            if (value !== options.comparedValue) {
+                return 'not equal';
+            }
+        });
+
+        const parse = function(value) {
+            return ++value;
+        };
+
+        const valid = validators.isEqual(1, 2, {parse: parse});
+        expect(valid).to.be.undefined;
     });
 });
