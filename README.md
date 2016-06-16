@@ -115,7 +115,7 @@ options which validator returns instead string (except options that end in `Mess
 
 - **comparedValue** (`Any`) - value for comparison. User can set it as `options.comparedValue`
 
-- **options** (`Object`) - If you is not Object you get option value in validator as `options.comparedValue`
+- **options** (`Object`) - options
   * `comparedValue` (`Any`) - Will be set if comparedValue is specified
   * `parse` (`Function`) - Can change input value before validation
   * (`Any`) - Any custom options
