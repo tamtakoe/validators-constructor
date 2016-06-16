@@ -75,6 +75,9 @@ validators.range(7, {from: 1, to: 5, lessMessage: 'is too less', manyMessage: 'i
 ### Validators([options])
 
 - **options** (`Object`)
+  * `formatStr` (`Function`) - Custom template parser for error strings.
+                               *get* `(templateStr, variablesObj)`
+                               *return* `str`
   * `errorFormat` (`Object`) - Output format of error. By default:
 ```js
 {
@@ -90,11 +93,6 @@ You can use %{template} syntax (by default). Next variables are enabled:
 options which you set in validator `options` if `$options: true`;
 options which validator returns instead string (except options that end in `Message`) if `$origin: true`
 
-  *
-    * `formatStr` (`Function`) - Custom template parser for error strings.
-
-*get* `(templateStr, variablesObj)`
-*return* `str`
 
 - **return** (`Validators`) instance of Validators
 
