@@ -75,9 +75,7 @@ validators.range(7, {from: 1, to: 5, lessMessage: 'is too less', manyMessage: 'i
 ### Validators([options])
 
 - **options** (`Object`)
-  * `formatStr` (`Function`) - Custom template parser for error strings.
-                               *get* `(templateStr, variablesObj)`
-                               *return* `str`
+  * `formatStr` (`Function`) - Custom template parser. *get* `(templateStr, variablesObj)`. *return* `str`
   * `errorFormat` (`Object`) - Output format of error. By default:
 ```js
 {
