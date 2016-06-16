@@ -32,7 +32,13 @@ validators.load({
 
     //Difficult validator (validate by several params)
     range: function(value, options) {
-        if (isNumber(value)) {
+        var errorType = this.number(value) //you can find any validator from validators in `this`
+
+        if (errorType) {
+            return errorType; //returns error message of other validator
+        }
+
+        if (!errorType) {
             if (value > options.to) {
                 return {
                     type: 'many',

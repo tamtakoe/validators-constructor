@@ -111,7 +111,7 @@ Validators.prototype.add = function(name, validator) {
                 value = options.parse(value);
             }
             
-            let error = noComparedValue ? validator(value, options) : validator(value, comparedValue, options);
+            let error = noComparedValue ? validator.call(this, value, options) : validator.call(this, value, comparedValue, options);
 
             if (error) {
                 if (options.message) {
