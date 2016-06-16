@@ -86,7 +86,7 @@ validators.range(7, {from: 1, to: 5, lessMessage: 'is too less', manyMessage: 'i
                            *get* `(templateStr, variablesObj)`
                            *return* `str`
 
-**return** (`Validators`) instance of Validators
+- **return** (`Validators`) instance of Validators
 
 
 ### validators.add(validatorName, validatorFn)
