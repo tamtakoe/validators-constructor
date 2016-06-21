@@ -28,7 +28,7 @@ validators.load({
             return 'is too long (maximum is %{comparedValue})';
         }
     },
-    maxlength: 'maxLength', //alias for `maxLength`
+    lengthMax: 'maxLength', //alias for `maxLength`
 
     //Validate by several params
     range: function(value, options) {
@@ -65,11 +65,11 @@ validators.load({
     }],
 });
 
-validators.maxlength('abc', 2);
+validators.lengthMax('abc', 2);
 /* returns:
 {
     message: 'is too long (maximum is 2)',
-    error: 'maxlength',
+    error: 'lengthMax',
     comparedValue: 2
 }
 */
