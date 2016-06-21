@@ -30,7 +30,7 @@ validators.load({
     },
     maxlength: 'maxLength', //alias for `maxLength`
 
-    //Difficult validator (validate by several params)
+    //Validate by several params
     range: function(value, options) {
         var errorType = this.number(value) //you can find any validator from validators in `this`
 
@@ -41,18 +41,28 @@ validators.load({
         if (!errorType) {
             if (value > options.to) {
                 return {
-                    type: 'many',
-                    message: options.manyMessage || 'is too many (should be from %{from} to %{to})'
+                    error: 'range.many', //error is error key. It should be unique
+                    message: options.manyMessage || 'is too many (should be from %{from} to %{to})',
+                    description: 'Make your number less'
                 }
 
             } else if (value < options.from) {
                 return {
-                    type: 'less',
-                    message: options.lessMessage || 'is too less (should be from %{from} to %{to})'
+                    error: 'range.less',
+                    message: options.lessMessage || 'is too less (should be from %{from} to %{to})',
+                    validator: 'range',
+                    description: 'Make your number greater'
                 }
             }
         }
-    }
+    },
+
+    //Chain of validators
+    minStrict: ['required', {validator: 'number', options: {strict: true}}, function(value, comparedValue, options) {
+        if (value < comparedValue) {
+            return 'is too short (minimum is %{comparedValue})';
+        }
+    }],
 });
 
 validators.maxlength('abc', 2);
@@ -67,11 +77,19 @@ validators.maxlength('abc', 2);
 validators.range(7, {from: 1, to: 5, lessMessage: 'is too less', manyMessage: 'is too many'});
 /* returns (options end in `Message` are not in the result):
 {
-    type: 'many',
+    description: 'Make your number less',
     message: 'is too many',
-    error: 'range',
+    error: 'range.many',
     from: 1,
     to: 5
+}
+*/
+
+validators.minStrict(null, 3);
+/* returns:
+{
+    message: 'can\'t be blank',
+    error: 'required'
 }
 */
 ```
@@ -105,7 +123,7 @@ options which validator returns instead string (except options that end in `Mess
 
 - **validatorName** (`String`) - Name of validator in validators instance
 
-- **validatorFn** (`Function` or `String`) - Validator or alias
+- **validatorFn** (`Function` or `String` or `Array`) - Validator or alias or validators array
 
 
 
@@ -123,6 +141,7 @@ options which validator returns instead string (except options that end in `Mess
 
 - **options** (`Object`) - options
   * `comparedValue` (`Any`) - Will be set if comparedValue is specified
+  * `message` (`Any`) - Override error message
   * `parse` (`Function`) - Can change input value before validation
   * (`Any`) - Any custom options
 
