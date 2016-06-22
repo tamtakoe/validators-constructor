@@ -73,7 +73,7 @@ validators.lengthMax('abc', 2);
 */
 
 validators.range(7, {from: 1, to: 5, lessMessage: 'is too less', manyMessage: 'is too many'});
-/* returns (options end in `Message` are not in the result):
+/* returns (options which end in `Message` are not in the result):
 {
     description: 'Make your number less',
     message: 'is too many',
@@ -97,8 +97,8 @@ validators.minStrict(null, 3);
 ### Validators([options])
 
 - **options** (`Object`)
-  * `formatStr` (`Function`) - Custom template parser. *get* `(templateStr, variablesObj)`. *return* `str`
-  * `errorFormat` (`Object`) - Output format of error. By default:
+  * formatStr (`Function`) - Custom template parser. *get* `(templateStr, variablesObj)`. *return* `str`
+  * errorFormat (`Object`) - Output format of error. By default:
 ```js
 {
     error: '%{validator}',
@@ -138,9 +138,9 @@ options which validator returns instead string (except options that end in `Mess
 - **comparedValue** (`Any`) - value for comparison. User can set it as `options.comparedValue`
 
 - **options** (`Object`) - options
-  * `comparedValue` (`Any`) - Will be set if comparedValue is specified
-  * `message` (`Any`) - Override error message
-  * `parse` (`Function`) - Can change input value before validation
+  * comparedValue (`Any`) - Will be set if comparedValue is specified
+  * message (`Any`) - Override error message
+  * parse (`Function`) - Can change input value before validation
   * (`Any`) - Any custom options
 
 - **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value enable as `value`)
