@@ -21,7 +21,7 @@ const validators = Validators();
 validators.load({
     //Simple validator
     maxLength: function(value, comparedValue, options) {
-        //if you use `comparedValue` you must specify `options` in arguments even if they do not use
+        //if you use `comparedValue` you must specify `options` argument even if it do not use
         //comparedValue also is available as options.comparedValue
 
         if ((isString(value) || isArray(value)) && value.length > comparedValue) {
