@@ -56,9 +56,9 @@ validators.load({
     },
 
     //Chain of validators
-    minStrict: ['required', {validator: 'number', options: {strict: true}}, function(val, cVal, opts) {
-        if (value < comparedValue) {
-            return 'is too short (minimum is %{comparedValue})';
+    minStrict: ['required', {validator:'number', options:{strict: true}}, function(val, cVal, opts) {
+        if (val < cVal) {
+            return '%{value} is too short (minimum is %{comparedValue})';
         }
     }],
 });
