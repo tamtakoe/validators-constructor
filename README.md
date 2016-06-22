@@ -35,14 +35,14 @@ validators.load({
         var typeNumberError = this.number(value) //you can find any validator in `this`
 
         if (typeNumberError) {
-            return typeNumberError; //returns error message of other validator
+            return typeNumberError; //returns error message of `number` validator
         }
 
         if (value > options.to) {
             return {
-                error: 'range.many', //error is error key. It should be unique
+                error: 'range.many', //error is key. It should be unique
                 message: options.manyMessage || 'is too many (should be from %{from} to %{to})',
-                description: 'Make your number less'
+                description: 'Make your number less' //You can use extra fields
             }
         }
 
@@ -50,14 +50,13 @@ validators.load({
             return {
                 error: 'range.less',
                 message: options.lessMessage || 'is too less (should be from %{from} to %{to})',
-                validator: 'range',
                 description: 'Make your number greater'
             }
         }
     },
 
     //Chain of validators
-    minStrict: ['required', {validator: 'number', options: {strict: true}}, function(value, comparedValue, options) {
+    minStrict: ['required', {validator: 'number', options: {strict: true}}, function(val, cVal, opts) {
         if (value < comparedValue) {
             return 'is too short (minimum is %{comparedValue})';
         }
