@@ -164,4 +164,39 @@ describe('validator', function() {
         expect(error.error).to.equal('valid');
         expect(error.message).to.equal('invalid');
     });
+
+    it('should override error field in object', function() {
+        validators.add('isValid', function(value, options) {
+            return {
+                error: 'errorKey',
+                message: 'validatorMessage'
+            }
+        });
+
+        const error = validators.isValid(1);
+        expect(error.error).to.equal('errorKey');
+        expect(error.message).to.equal('validatorMessage');
+    });
+
+    it('should override error message string', function() {
+        validators.add('isValid', function(value, options) {
+            return 'validatorMessage'
+        });
+
+        const error = validators.isValid(1, {message: 'overridedMessage'});
+        expect(error.message).to.equal('overridedMessage');
+    });
+
+    it('should override error message object', function() {
+        validators.add('isValid', function(value, options) {
+            return {
+                error: 'errorKey',
+                message: 'validatorMessage'
+            }
+        });
+
+        const error = validators.isValid(1, {message: 'overridedMessage'});
+        expect(error.error).to.equal('isValid');
+        expect(error.message).to.equal('overridedMessage');
+    });
 });
