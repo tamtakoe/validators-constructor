@@ -21,7 +21,7 @@ const validators = Validators();
 validators.load({
     //Simple validator
     maxLength: function(value, comparedValue, options) {
-        //if you use `comparedValue` you must specify `options` argument even if it do not use
+        //comparedValue can not be an object. In this situation it will be options
         //comparedValue also is available as options.comparedValue
 
         if ((isString(value) || isArray(value)) && value.length > comparedValue) {
@@ -139,13 +139,15 @@ options which validator returns instead string (except options that end in Messa
 
 - **value** (`Any`) - Validated value
 
-- **comparedValue** (`Any`) - value for comparison. User can set it as `options.comparedValue`
+- **comparedValue** (`Any`) - Value for comparison. Can not be an object. User can set it as `options.comparedValue`
 
-- **options** (`Object`) - options
+- **options** (`Object`) - Options
   * comparedValue (`Any`) - Will be set if comparedValue is specified
   * message (`Any`) - Override error message
   * parse (`Function`) - Can change input value before validation
   * (`Any`) - Any custom options
+
+- (`Any`) - Any custom arguments
 
 - **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value is enabled as `value`, compared value - as `comparedValue`)
 

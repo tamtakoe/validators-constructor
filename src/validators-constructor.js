@@ -19,32 +19,22 @@ const hiddenPropertySettings = {
  * @returns {Function} extended validator
  */
 function validatorWrapper(validators, name, validator) {
-    return function(value, comparedValue, options, alias) {
-        var noComparedValue;
+    return function(value, options) {
+        let args = arguments;
+        const validatorObj = validators[name];
+        const validatorAliasObj = this.alias ? validators[this.alias] : {};
 
-        if (validator.length < 3) {
-            noComparedValue = true;
-            options = comparedValue;
-        }
-
-        options = options || {};
-
-        if (options.hasOwnProperty(COMPARED_VALUE)) {
-            noComparedValue = false;
-            comparedValue = options[COMPARED_VALUE];
-        }
-
-        if (!noComparedValue) {
-            options[COMPARED_VALUE] = comparedValue;
-        }
-
-        options = Object.assign({}, validators[name].defaultOptions, options);
+        options = Object.assign({}, validatorObj.defaultOptions, validatorAliasObj.defaultOptions, options);
 
         if (typeof options.parse === 'function') {
             value = options.parse(value);
         }
 
-        let error = noComparedValue ? validator.call(validators, value, options) : validator.call(validators, value, comparedValue, options);
+        if (options.hasOwnProperty(COMPARED_VALUE)) {
+            args = [value, options[COMPARED_VALUE]].concat(Array.prototype.slice.call(arguments, 1));
+        }
+
+        let error = validator.apply(validators, args);
 
         if (error) {
             if (options.message) {
@@ -52,7 +42,7 @@ function validatorWrapper(validators, name, validator) {
             }
 
             let formattedErrorMessage = validators.formatMessage(error, Object.assign({value: value}, options));
-            let format = validators[name].errorFormat || validators.errorFormat;
+            let format = validatorObj.errorFormat || validatorAliasObj.errorFormat || validators.errorFormat;
 
             if (format) {
                 if (typeof formattedErrorMessage === 'string') {
@@ -76,7 +66,7 @@ function validatorWrapper(validators, name, validator) {
                 }
 
                 return validators.formatMessage(format, Object.assign(
-                    {validator: alias || name, value: value}, options, formattedErrorMessage
+                    {validator: this.alias || name, value: value}, options, formattedErrorMessage
                 ));
             }
 
@@ -135,30 +125,42 @@ function Validators(options) {
  * @param {Function|String|Array} validator, alias or validators array
  */
 Validators.prototype.add = function (name, validator) {
-    if (typeof validator === 'string') { //alias
-        this[name] = (value, comparedValue, options) => this[validator](value, comparedValue, options, name);
+    if (typeof validator === 'string') {
+        this[name] = function(/*value, comparedValue, options*/) {
+            return this[validator].apply({alias: name, _this: this}, arguments);
+        };
 
     } else {
         var validators = validator instanceof Array ? validator : [validator];
 
-        this[name] = (value, comparedValue, options, alias) => {
+        this[name] = function(value /*comparedValue, options*/) {
+            let options;
+            let args = Array.prototype.slice.call(arguments, 2);
+
+            if (({}).toString.call(arguments[1]) === '[object Object]') {
+                options = arguments[1] || {};
+            } else {
+                options = arguments[2] || {};
+                options[COMPARED_VALUE] = arguments[1];
+                args.shift();
+            }
+
             for (var i = 0; i < validators.length; i++) {
                 var base = validators[i];
-                var options = options instanceof Array ? options[i] : options;
 
                 switch (typeof base) {
                     case 'function':
-                        validator = validatorWrapper(this, name, base); break;
+                        validator = validatorWrapper(this._this || this, name, base); break;
 
                     case 'string':
                         validator = this[base]; break;
 
                     case 'object':
                         validator = this[base.validator];
-                        options = Object.assign({}, base.options, options);
+                        options = Object.assign({}, options, base.options);
                 }
 
-                var error = validator(value, comparedValue, options, alias);
+                var error = validator.apply(this, [value, options].concat(args));
 
                 if (error) {
                     return error;

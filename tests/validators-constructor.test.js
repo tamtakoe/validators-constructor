@@ -213,4 +213,20 @@ describe('validator', function() {
         expect(error.error).to.equal('isValid');
         expect(error.message).to.equal('overridedMessage');
     });
+
+    it('should pass arguments in validator', function() {
+        validators.add('isValid', function(value, options) {
+            expect(Array.prototype.slice.call(arguments)).to.deep.equal([1, {}, 3, 4]);
+        });
+
+        validators.isValid(1, {}, 3, 4);
+    });
+
+    it('should pass arguments and comparedValue in validator', function() {
+        validators.add('isValid', function(value, options) {
+            expect(Array.prototype.slice.call(arguments)).to.deep.equal([1, 2, {comparedValue: 2}, 4]);
+        });
+
+        validators.isValid(1, 2, null, 4);
+    });
 });
