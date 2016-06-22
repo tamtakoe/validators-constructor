@@ -32,27 +32,26 @@ validators.load({
 
     //Validate by several params
     range: function(value, options) {
-        var errorTypeNumber = this.number(value) //you can find any validator in `this`
+        var typeNumberError = this.number(value) //you can find any validator in `this`
 
-        if (errorTypeNumber) {
-            return errorTypeNumber; //returns error message of other validator
+        if (typeNumberError) {
+            return typeNumberError; //returns error message of other validator
         }
 
-        if (!errorType) {
-            if (value > options.to) {
-                return {
-                    error: 'range.many', //error is error key. It should be unique
-                    message: options.manyMessage || 'is too many (should be from %{from} to %{to})',
-                    description: 'Make your number less'
-                }
+        if (value > options.to) {
+            return {
+                error: 'range.many', //error is error key. It should be unique
+                message: options.manyMessage || 'is too many (should be from %{from} to %{to})',
+                description: 'Make your number less'
+            }
+        }
 
-            } else if (value < options.from) {
-                return {
-                    error: 'range.less',
-                    message: options.lessMessage || 'is too less (should be from %{from} to %{to})',
-                    validator: 'range',
-                    description: 'Make your number greater'
-                }
+        if (value < options.from) {
+            return {
+                error: 'range.less',
+                message: options.lessMessage || 'is too less (should be from %{from} to %{to})',
+                validator: 'range',
+                description: 'Make your number greater'
             }
         }
     },
