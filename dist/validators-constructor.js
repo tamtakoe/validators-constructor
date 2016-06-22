@@ -181,6 +181,8 @@ Validators.prototype.add = function (name, validator) {
             }
         };
     }
+
+    return this;
 };
 
 /**
@@ -192,6 +194,8 @@ Validators.prototype.load = function (validatorsObj) {
     Object.keys(validatorsObj).forEach(function (key) {
         return _this2.add(key, validatorsObj[key]);
     });
+
+    return this;
 };
 
 /**

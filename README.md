@@ -114,7 +114,7 @@ options which you set in validator options if `$options: true`;
 options which validator returns instead string (except options that end in Message) if `$origin: true`
 
 
-- **return** (`Validators`) instance of Validators
+- **return** (`Validators`) new instance of Validators
 
 
 ### validators.add(validatorName, validator)
@@ -123,11 +123,15 @@ options which validator returns instead string (except options that end in Messa
 
 - **validator** (`Function` or `String` or `Array`) - Validator or alias or validators array
 
+- **return** (`Validators`) instance of Validators
+
 
 
 ### validators.load(validatorsObj)
 
 - **validatorsObj** (`Object`) - Object has structure `{validatorName: validator, ...}`
+
+- **return** (`Validators`) instance of Validators
 
 
 

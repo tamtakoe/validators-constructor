@@ -166,6 +166,8 @@ Validators.prototype.add = function (name, validator) {
             }
         };
     }
+
+    return this;
 };
 
 /**
@@ -173,6 +175,8 @@ Validators.prototype.add = function (name, validator) {
  */
 Validators.prototype.load = function(validatorsObj) {
     Object.keys(validatorsObj).forEach(key => this.add(key, validatorsObj[key]));
+
+    return this;
 };
 
 /**
