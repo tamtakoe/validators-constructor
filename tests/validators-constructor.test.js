@@ -120,6 +120,20 @@ describe('validator', function() {
         expect(error).to.be.undefined;
     });
 
+    it('validators should be enabled in this', function() {
+        validators.add('isValid', function(value, comparedValue, options) {
+            return 'invalid'
+        });
+
+        validators.add('myValidator', function(value, comparedValue, options) {
+            return this.isValid(value);
+        });
+
+        const error = validators.myValidator(1);
+        expect(error.error).to.equal('isValid');
+        expect(error.message).to.equal('invalid');
+    });
+
     it('should work with alias', function() {
         validators.add('valid', 'isValid');
         validators.add('isValid', function(value, comparedValue, options) {
