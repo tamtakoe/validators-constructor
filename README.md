@@ -107,9 +107,9 @@ validators.minStrict(null, 3);
     $origin: true
 }
 ```
-You can use %{template} syntax (by default). Next variables are enabled:
-`validator` - validator name. f.e. `maxLength`;
-`message` - string which validator returns if error;
+Default `formatStr` function allows to use %{template} syntax. Next variables are enabled:
+`validator` - validator name (e.g. `maxLength`);
+`message` - string that is returned in case of error;
 options which you set in validator `options` if `$options: true`;
 options which validator returns instead string (except options that end in `Message`) if `$origin: true`
 
