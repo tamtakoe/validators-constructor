@@ -107,31 +107,31 @@ validators.minStrict(null, 3);
     $origin: true
 }
 ```
-Default `formatStr` function allows to use %{template} syntax. Next variables are enabled:
-`validator` - validator name (e.g. `maxLength`);
+Default formatStr function allows to use %{template} syntax. Next variables are enabled:
+`validator` - validator name (e.g. maxLength);
 `message` - string that is returned in case of error;
-options which you set in validator `options` if `$options: true`;
-options which validator returns instead string (except options that end in `Message`) if `$origin: true`
+options which you set in validator options if `$options: true`;
+options which validator returns instead string (except options that end in Message) if `$origin: true`
 
 
 - **return** (`Validators`) instance of Validators
 
 
-### validators.add(validatorName, validatorFn)
+### validators.add(validatorName, validator)
 
 - **validatorName** (`String`) - Name of validator in validators instance
 
-- **validatorFn** (`Function` or `String` or `Array`) - Validator or alias or validators array
+- **validator** (`Function` or `String` or `Array`) - Validator or alias or validators array
 
 
 
 ### validators.load(validatorsObj)
 
-- **validatorsObj** (`Object`) - Object has structure `{validatorName: validatorFn, ...}`
+- **validatorsObj** (`Object`) - Object has structure `{validatorName: validator, ...}`
 
 
 
-### validatorFn(value, [comparedValue], [options])
+### validator(value, [comparedValue], [options])
 
 - **value** (`Any`) - Validated value
 
@@ -143,7 +143,7 @@ options which validator returns instead string (except options that end in `Mess
   * parse (`Function`) - Can change input value before validation
   * (`Any`) - Any custom options
 
-- **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value enable as `value`)
+- **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value enable as `value`, compared value - as `comparedValue`)
 
 
 ## Tests
