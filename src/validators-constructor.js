@@ -125,9 +125,11 @@ function Validators(options) {
  * @param {Function|String|Array} validator, alias or validators array
  */
 Validators.prototype.add = function (name, validator) {
+    var _this = this;
+
     if (typeof validator === 'string') {
         this[name] = function(/*value, comparedValue, options*/) {
-            return this[validator].apply({alias: name, _this: this}, arguments);
+            return _this[validator].apply({alias: name, _this: _this}, arguments);
         };
 
     } else {
@@ -145,18 +147,20 @@ Validators.prototype.add = function (name, validator) {
                 args.shift();
             }
 
+            _this = this._this || _this;
+
             for (var i = 0; i < validators.length; i++) {
                 var base = validators[i];
 
                 switch (typeof base) {
                     case 'function':
-                        validator = validatorWrapper(this._this || this, name, base); break;
+                        validator = validatorWrapper(_this, name, base); break;
 
                     case 'string':
-                        validator = this[base]; break;
+                        validator = _this[base]; break;
 
                     case 'object':
-                        validator = this[base.validator];
+                        validator = _this[base.validator];
                         options = Object.assign({}, options, base.options);
                 }
 
