@@ -143,7 +143,7 @@ options which validator returns instead string (except options that end in Messa
   * parse (`Function`) - Can change input value before validation
   * (`Any`) - Any custom options
 
-- **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value enable as `value`, compared value - as `comparedValue`)
+- **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value is enabled as `value`, compared value - as `comparedValue`)
 
 
 ## Tests

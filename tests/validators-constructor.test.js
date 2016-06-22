@@ -61,7 +61,7 @@ describe('validator', function() {
         expect(invalid.comparedValue).to.equal(2);
     });
 
-    it('options should be an object anyway', function() {
+    it('options should be an object', function() {
         validators.add('isValid', function(value, options) {
             expect(options).to.be.object;
         });
@@ -71,14 +71,38 @@ describe('validator', function() {
     });
 
     it('should set comparedValue to options', function() {
-        validators.add('isEqual', function(value, comparedValue, options) {
-            if (value !== options.comparedValue) {
-                return 'not equal';
-            }
+        validators.add('isValid', function(value, comparedValue, options) {
+            expect(options.comparedValue).to.equal(2);
         });
 
-        const valid = validators.isEqual(1, 1);
-        expect(valid).to.be.undefined;
+        validators.isValid(1, 2);
+    });
+
+    it('value should be enabled for string format', function() {
+        validators.add('isValid', function(value, comparedValue, options) {
+            return '%{value}';
+        });
+
+        const error = validators.isValid(1);
+        expect(error.message).to.equal('1');
+    });
+
+    it('comparedValue should be enabled for string format', function() {
+        validators.add('isValid', function(value, comparedValue, options) {
+            return '%{comparedValue}';
+        });
+
+        const error = validators.isValid(1, 2);
+        expect(error.message).to.equal('2');
+    });
+
+    it('custom option should be enabled for string format', function() {
+        validators.add('isValid', function(value, options) {
+            return '%{myOption}';
+        });
+
+        const error = validators.isValid(1, {myOption: 3});
+        expect(error.message).to.equal('3');
     });
 
     it('should prepare value by parse', function() {
@@ -92,7 +116,52 @@ describe('validator', function() {
             return ++value;
         };
 
-        const valid = validators.isEqual(1, 2, {parse: parse});
-        expect(valid).to.be.undefined;
+        const error = validators.isEqual(1, 2, {parse: parse});
+        expect(error).to.be.undefined;
+    });
+
+    it('should work with alias', function() {
+        validators.add('valid', 'isValid');
+        validators.add('isValid', function(value, comparedValue, options) {
+            return 'invalid'
+        });
+
+        const error = validators.valid();
+        expect(error.error).to.equal('valid');
+        expect(error.message).to.equal('invalid');
+    });
+
+    it('should work with complex validator with aliases', function() {
+        validators.load({
+            isValid: function(value, comparedValue, options) {
+                return 'invalid'
+            },
+            valid: 'isValid',
+            myValidator: ['valid', function(value, comparedValue, options) {
+                return 'OK'
+            }]
+        });
+
+        const error = validators.myValidator();
+        expect(error.error).to.equal('valid');
+        expect(error.message).to.equal('invalid');
+    });
+
+    it('should work with complex validator with objects', function() {
+        validators.load({
+            isValid: function(value, comparedValue, options) {
+                if (options.strict) {
+                    return 'invalid'
+                }
+            },
+            valid: 'isValid',
+            myValidator: [{validator: 'valid', options: {strict: true}}, function(value, comparedValue, options) {
+                return 'OK'
+            }]
+        });
+
+        const error = validators.myValidator();
+        expect(error.error).to.equal('valid');
+        expect(error.message).to.equal('invalid');
     });
 });
