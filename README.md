@@ -32,7 +32,7 @@ validators.load({
 
     //Validate by several params
     range: function(value, options) {
-        var errorType = this.number(value) //you can find any validator from validators in `this`
+        var errorType = this.number(value) //you can find any validator in `this`
 
         if (errorType) {
             return errorType; //returns error message of other validator
