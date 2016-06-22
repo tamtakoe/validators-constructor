@@ -21,7 +21,7 @@ const validators = Validators();
 validators.load({
     //Simple validator
     maxLength: function(value, comparedValue, options) {
-        //comparedValue can not be an object. In this situation it will be options
+        //comparedValue can not be an object or undefined. In this situation it will be options
         //comparedValue also is available as options.comparedValue
 
         if ((isString(value) || isArray(value)) && value.length > comparedValue) {
@@ -139,7 +139,8 @@ options which validator returns instead string (except options that end in Messa
 
 - **value** (`Any`) - Validated value
 
-- **comparedValue** (`Any`) - Value for comparison. Can not be an object. User can set it as `options.comparedValue`
+- **comparedValue** (`Any`) - Value for comparison. Can not be an object or undefined. User can set it as `options.comparedValue`.
+                              If you use 'comparedValue' in your validator you must be sure that user will specify this value
 
 - **options** (`Object`) - Options
   * comparedValue (`Any`) - Will be set if comparedValue is specified

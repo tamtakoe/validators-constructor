@@ -147,11 +147,11 @@ describe('validator', function() {
 
     it('should work with complex validator with aliases', function() {
         validators.load({
-            isValid: function(value, comparedValue, options) {
+            isValid: function(value, options) {
                 return 'invalid'
             },
             valid: 'isValid',
-            myValidator: ['valid', function(value, comparedValue, options) {
+            myValidator: ['valid', function(value, options) {
                 return 'OK'
             }]
         });
@@ -163,18 +163,36 @@ describe('validator', function() {
 
     it('should work with complex validator with objects', function() {
         validators.load({
+            isValid: function(value, options) {
+                if (options.strict) {
+                    return 'invalid'
+                }
+            },
+            valid: 'isValid',
+            myValidator: [{validator: 'valid', options: {strict: true}}, function(value, options) {
+                return 'OK'
+            }]
+        });
+
+        const error = validators.myValidator();
+        expect(error.error).to.equal('valid');
+        expect(error.message).to.equal('invalid');
+    });
+
+    it('should work with complex validator with objects and comparedValue', function() {
+        validators.load({
             isValid: function(value, comparedValue, options) {
                 if (options.strict) {
                     return 'invalid'
                 }
             },
             valid: 'isValid',
-            myValidator: [{validator: 'valid', options: {strict: true}}, function(value, comparedValue, options) {
+            myValidator: [{validator: 'valid', options: {strict: true}}, function(value, options) {
                 return 'OK'
             }]
         });
 
-        const error = validators.myValidator();
+        const error = validators.myValidator(null, 1, null);
         expect(error.error).to.equal('valid');
         expect(error.message).to.equal('invalid');
     });
