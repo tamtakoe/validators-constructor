@@ -97,7 +97,7 @@ validators.minStrict(null, 3);
 ### Validators([options])
 
 - **options** (`Object`)
-  * formatStr (`Function`) - Custom template parser. *get* `(templateStr, variablesObj)`. *return* `str`
+  * formatStr (`Function`) - Custom template parser. *params:* `templateStr`, `variablesObj`. *returns:* `str`
   * errorFormat (`Object`) - Output format of error. By default:
 ```js
 {
