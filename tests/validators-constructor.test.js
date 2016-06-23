@@ -247,4 +247,17 @@ describe('validator', function() {
 
         validators.isValid(1, 2, null, 4);
     });
+
+    it('should work without this', function() {
+        validators.add('isValid', function(value) {
+            expect(this.isValid).to.be.a('function');
+            return 'invalid';
+        });
+
+        validators.add('valid', 'isValid');
+
+        const error = validators.valid.call(null);
+        expect(error.error).to.equal('valid');
+        expect(error.message).to.equal('invalid');
+    });
 });
