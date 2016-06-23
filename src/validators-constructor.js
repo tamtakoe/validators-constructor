@@ -2,7 +2,6 @@
 
 const FORMAT_REGEXP = /(%?)%\{([^\}]+)\}/g; // Finds %{key} style patterns in the given string
 const MESSAGE_REGEXP = /message/i;
-const COMPARED_VALUE = 'comparedValue';
 const hiddenPropertySettings = {
     enumerable: false,
     configurable: false,
@@ -21,8 +20,10 @@ const hiddenPropertySettings = {
 function validatorWrapper(validators, name, validator) {
     return function(value, options) {
         let args = arguments;
+        const alias = this.alias;
+        const _this = this._this || this;
         const validatorObj = validators[name];
-        const validatorAliasObj = this.alias ? validators[this.alias] : {};
+        const validatorAliasObj = alias ? validators[alias] : {};
 
         options = Object.assign({}, validatorObj.defaultOptions, validatorAliasObj.defaultOptions, options);
 
@@ -30,8 +31,8 @@ function validatorWrapper(validators, name, validator) {
             value = options.parse(value);
         }
 
-        if (options.hasOwnProperty(COMPARED_VALUE)) {
-            args = [value, options[COMPARED_VALUE]].concat(Array.prototype.slice.call(arguments, 1));
+        if (options.hasOwnProperty(_this.arg)) {
+            args = [value, options[_this.arg]].concat(Array.prototype.slice.call(arguments, 1));
         }
 
         let error = validator.apply(validators, args);
@@ -66,7 +67,7 @@ function validatorWrapper(validators, name, validator) {
                 }
 
                 return validators.formatMessage(format, Object.assign(
-                    {validator: this.alias || name, value: value}, options, formattedErrorMessage
+                    {validator: alias || name, value: value}, options, formattedErrorMessage
                 ));
             }
 
@@ -105,7 +106,8 @@ function formatStr(str, values) {
 function Validators(options) {
     Object.defineProperties(this, {
         errorFormat: hiddenPropertySettings,
-        formatStr: hiddenPropertySettings
+        formatStr: hiddenPropertySettings,
+        arg: hiddenPropertySettings
     });
 
     this.errorFormat = {
@@ -116,6 +118,8 @@ function Validators(options) {
     };
 
     this.formatStr = formatStr;
+
+    this.arg = 'arg';
 
     Object.assign(this, options);
 }
@@ -128,14 +132,14 @@ Validators.prototype.add = function (name, validator) {
     var _this = this;
 
     if (typeof validator === 'string') {
-        this[name] = function(/*value, comparedValue, options*/) {
+        this[name] = function(/*value, arg, options*/) {
             return _this[validator].apply({alias: name, _this: _this}, arguments);
         };
 
     } else {
         var validators = validator instanceof Array ? validator : [validator];
 
-        this[name] = function(value /*comparedValue, options*/) {
+        this[name] = function(value /*arg, options*/) {
             let options;
             let args = Array.prototype.slice.call(arguments, 2);
 
@@ -143,7 +147,7 @@ Validators.prototype.add = function (name, validator) {
                 options = arguments[1] || {};
             } else {
                 options = arguments[2] || {};
-                options[COMPARED_VALUE] = arguments[1];
+                options[this.arg] = arguments[1];
                 args.shift();
             }
 

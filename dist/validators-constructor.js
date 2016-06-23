@@ -5,7 +5,6 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var FORMAT_REGEXP = /(%?)%\{([^\}]+)\}/g; // Finds %{key} style patterns in the given string
 var MESSAGE_REGEXP = /message/i;
-var COMPARED_VALUE = 'comparedValue';
 var hiddenPropertySettings = {
     enumerable: false,
     configurable: false,
@@ -23,11 +22,11 @@ var hiddenPropertySettings = {
  */
 function validatorWrapper(validators, name, validator) {
     return function (value, options) {
-        var _this2 = this;
-
         var args = arguments;
+        var alias = this.alias;
+        var _this = this._this || this;
         var validatorObj = validators[name];
-        var validatorAliasObj = this.alias ? validators[this.alias] : {};
+        var validatorAliasObj = alias ? validators[alias] : {};
 
         options = Object.assign({}, validatorObj.defaultOptions, validatorAliasObj.defaultOptions, options);
 
@@ -35,8 +34,8 @@ function validatorWrapper(validators, name, validator) {
             value = options.parse(value);
         }
 
-        if (options.hasOwnProperty(COMPARED_VALUE)) {
-            args = [value, options[COMPARED_VALUE]].concat(Array.prototype.slice.call(arguments, 1));
+        if (options.hasOwnProperty(_this.arg)) {
+            args = [value, options[_this.arg]].concat(Array.prototype.slice.call(arguments, 1));
         }
 
         var error = validator.apply(validators, args);
@@ -72,7 +71,7 @@ function validatorWrapper(validators, name, validator) {
                     }
 
                     return {
-                        v: validators.formatMessage(format, Object.assign({ validator: _this2.alias || name, value: value }, options, formattedErrorMessage))
+                        v: validators.formatMessage(format, Object.assign({ validator: alias || name, value: value }, options, formattedErrorMessage))
                     };
                 }
 
@@ -118,7 +117,8 @@ function formatStr(str, values) {
 function Validators(options) {
     Object.defineProperties(this, {
         errorFormat: hiddenPropertySettings,
-        formatStr: hiddenPropertySettings
+        formatStr: hiddenPropertySettings,
+        arg: hiddenPropertySettings
     });
 
     this.errorFormat = {
@@ -129,6 +129,8 @@ function Validators(options) {
     };
 
     this.formatStr = formatStr;
+
+    this.arg = 'arg';
 
     Object.assign(this, options);
 }
@@ -141,13 +143,13 @@ Validators.prototype.add = function (name, validator) {
     var _this = this;
 
     if (typeof validator === 'string') {
-        this[name] = function () /*value, comparedValue, options*/{
+        this[name] = function () /*value, arg, options*/{
             return _this[validator].apply({ alias: name, _this: _this }, arguments);
         };
     } else {
         var validators = validator instanceof Array ? validator : [validator];
 
-        this[name] = function (value /*comparedValue, options*/) {
+        this[name] = function (value /*arg, options*/) {
             var options = void 0;
             var args = Array.prototype.slice.call(arguments, 2);
 
@@ -155,7 +157,7 @@ Validators.prototype.add = function (name, validator) {
                 options = arguments[1] || {};
             } else {
                 options = arguments[2] || {};
-                options[COMPARED_VALUE] = arguments[1];
+                options[this.arg] = arguments[1];
                 args.shift();
             }
 
@@ -192,10 +194,10 @@ Validators.prototype.add = function (name, validator) {
  * @param {Object} validatorsObj. F.e. {validator1: validator1Fn, validator2: validator2Fn, ...}
  */
 Validators.prototype.load = function (validatorsObj) {
-    var _this3 = this;
+    var _this2 = this;
 
     Object.keys(validatorsObj).forEach(function (key) {
-        return _this3.add(key, validatorsObj[key]);
+        return _this2.add(key, validatorsObj[key]);
     });
 
     return this;
@@ -210,7 +212,7 @@ Validators.prototype.load = function (validatorsObj) {
  * @returns {String|Object} formatted string or object
  */
 Validators.prototype.formatMessage = function (message, values) {
-    var _this4 = this;
+    var _this3 = this;
 
     if (typeof message === 'function') {
         message = message(values.value, values);
@@ -221,7 +223,7 @@ Validators.prototype.formatMessage = function (message, values) {
             var formattedMessage = {};
 
             Object.keys(message).forEach(function (key) {
-                return formattedMessage[_this4.formatStr(key, values)] = _this4.formatStr(message[key], values);
+                return formattedMessage[_this3.formatStr(key, values)] = _this3.formatStr(message[key], values);
             });
 
             return {

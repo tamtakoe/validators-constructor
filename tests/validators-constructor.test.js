@@ -46,8 +46,8 @@ describe('validator', function() {
     });
 
     it('should validate', function() {
-        validators.add('isEqual', function(value, comparedValue, options) {
-            if (value !== comparedValue) {
+        validators.add('isEqual', function(value, arg) {
+            if (value !== arg) {
                 return 'not equal';
             }
         });
@@ -58,7 +58,7 @@ describe('validator', function() {
         const invalid = validators.isEqual(1, 2);
         expect(invalid.message).to.equal('not equal');
         expect(invalid.error).to.equal('isEqual');
-        expect(invalid.comparedValue).to.equal(2);
+        expect(invalid.arg).to.equal(2);
     });
 
     it('options should be an object', function() {
@@ -70,16 +70,16 @@ describe('validator', function() {
 
     });
 
-    it('should set comparedValue to options', function() {
-        validators.add('isValid', function(value, comparedValue, options) {
-            expect(options.comparedValue).to.equal(2);
+    it('should set arg to options', function() {
+        validators.add('isValid', function(value, arg, options) {
+            expect(options.arg).to.equal(2);
         });
 
         validators.isValid(1, 2);
     });
 
     it('value should be enabled for string format', function() {
-        validators.add('isValid', function(value, comparedValue, options) {
+        validators.add('isValid', function(value) {
             return '%{value}';
         });
 
@@ -87,9 +87,9 @@ describe('validator', function() {
         expect(error.message).to.equal('1');
     });
 
-    it('comparedValue should be enabled for string format', function() {
-        validators.add('isValid', function(value, comparedValue, options) {
-            return '%{comparedValue}';
+    it('arg should be enabled for string format', function() {
+        validators.add('isValid', function(value) {
+            return '%{arg}';
         });
 
         const error = validators.isValid(1, 2);
@@ -97,7 +97,7 @@ describe('validator', function() {
     });
 
     it('custom option should be enabled for string format', function() {
-        validators.add('isValid', function(value, options) {
+        validators.add('isValid', function(value) {
             return '%{myOption}';
         });
 
@@ -106,8 +106,8 @@ describe('validator', function() {
     });
 
     it('should prepare value by parse', function() {
-        validators.add('isEqual', function(value, comparedValue, options) {
-            if (value !== options.comparedValue) {
+        validators.add('isEqual', function(value, arg, options) {
+            if (value !== options.arg) {
                 return 'not equal';
             }
         });
@@ -121,11 +121,11 @@ describe('validator', function() {
     });
 
     it('validators should be enabled in this', function() {
-        validators.add('isValid', function(value, comparedValue, options) {
+        validators.add('isValid', function(value) {
             return 'invalid'
         });
 
-        validators.add('myValidator', function(value, comparedValue, options) {
+        validators.add('myValidator', function(value) {
             return this.isValid(value);
         });
 
@@ -136,7 +136,7 @@ describe('validator', function() {
 
     it('should work with alias', function() {
         validators.add('valid', 'isValid');
-        validators.add('isValid', function(value, comparedValue, options) {
+        validators.add('isValid', function(value) {
             return 'invalid'
         });
 
@@ -147,11 +147,11 @@ describe('validator', function() {
 
     it('should work with complex validator with aliases', function() {
         validators.load({
-            isValid: function(value, options) {
+            isValid: function(value) {
                 return 'invalid'
             },
             valid: 'isValid',
-            myValidator: ['valid', function(value, options) {
+            myValidator: ['valid', function(value) {
                 return 'OK'
             }]
         });
@@ -169,7 +169,7 @@ describe('validator', function() {
                 }
             },
             valid: 'isValid',
-            myValidator: [{validator: 'valid', options: {strict: true}}, function(value, options) {
+            myValidator: [{validator: 'valid', options: {strict: true}}, function(value) {
                 return 'OK'
             }]
         });
@@ -179,15 +179,15 @@ describe('validator', function() {
         expect(error.message).to.equal('invalid');
     });
 
-    it('should work with complex validator with objects and comparedValue', function() {
+    it('should work with complex validator with objects and arg', function() {
         validators.load({
-            isValid: function(value, comparedValue, options) {
+            isValid: function(value, arg, options) {
                 if (options.strict) {
                     return 'invalid'
                 }
             },
             valid: 'isValid',
-            myValidator: [{validator: 'valid', options: {strict: true}}, function(value, options) {
+            myValidator: [{validator: 'valid', options: {strict: true}}, function(value) {
                 return 'OK'
             }]
         });
@@ -198,7 +198,7 @@ describe('validator', function() {
     });
 
     it('should override error field in object', function() {
-        validators.add('isValid', function(value, options) {
+        validators.add('isValid', function(value) {
             return {
                 error: 'errorKey',
                 message: 'validatorMessage'
@@ -211,7 +211,7 @@ describe('validator', function() {
     });
 
     it('should override error message string', function() {
-        validators.add('isValid', function(value, options) {
+        validators.add('isValid', function(value) {
             return 'validatorMessage'
         });
 
@@ -220,7 +220,7 @@ describe('validator', function() {
     });
 
     it('should override error message object', function() {
-        validators.add('isValid', function(value, options) {
+        validators.add('isValid', function(value) {
             return {
                 error: 'errorKey',
                 message: 'validatorMessage'
@@ -233,16 +233,16 @@ describe('validator', function() {
     });
 
     it('should pass arguments in validator', function() {
-        validators.add('isValid', function(value, options) {
+        validators.add('isValid', function(value) {
             expect(Array.prototype.slice.call(arguments)).to.deep.equal([1, {}, 3, 4]);
         });
 
         validators.isValid(1, {}, 3, 4);
     });
 
-    it('should pass arguments and comparedValue in validator', function() {
-        validators.add('isValid', function(value, options) {
-            expect(Array.prototype.slice.call(arguments)).to.deep.equal([1, 2, {comparedValue: 2}, 4]);
+    it('should pass arguments and arg in validator', function() {
+        validators.add('isValid', function(value) {
+            expect(Array.prototype.slice.call(arguments)).to.deep.equal([1, 2, {arg: 2}, 4]);
         });
 
         validators.isValid(1, 2, null, 4);

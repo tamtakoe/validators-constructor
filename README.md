@@ -20,12 +20,12 @@ const validators = Validators();
 
 validators.load({
     //Simple validator
-    maxLength: function(value, comparedValue, options) {
-        //comparedValue can not be an object or undefined. In this situation it will be options
-        //comparedValue also is available as options.comparedValue
+    maxLength: function(value, arg, options) {
+        //arg can not be an object or undefined. In this situation it will be options
+        //arg also is available as options.arg
 
-        if ((isString(value) || isArray(value)) && value.length > comparedValue) {
-            return 'is too long (maximum is %{comparedValue})';
+        if ((isString(value) || isArray(value)) && value.length > arg) {
+            return 'is too long (maximum is %{arg})';
         }
     },
     lengthMax: 'maxLength', //alias for `maxLength`
@@ -58,7 +58,7 @@ validators.load({
     //Chain of validators
     minStrict: ['required', {validator:'number', options:{strict: true}}, function(val, cVal, opts) {
         if (val < cVal) {
-            return '%{value} is too short (minimum is %{comparedValue})';
+            return '%{value} is too short (minimum is %{arg})';
         }
     }],
 });
@@ -68,7 +68,7 @@ validators.lengthMax('abc', 2);
 {
     message: 'is too long (maximum is 2)',
     error: 'lengthMax',
-    comparedValue: 2
+    arg: 2
 }
 */
 
@@ -135,15 +135,15 @@ options which validator returns instead string (except options that end in Messa
 
 
 
-### validator(value, [comparedValue], [options])
+### validator(value, [arg], [options])
 
 - **value** (`Any`) - Validated value
 
-- **comparedValue** (`Any`) - Value for comparison. Can not be an object or undefined. User can set it as `options.comparedValue`.
-                              If you use 'comparedValue' in your validator you must be sure that user will specify this value
+- **arg** (`Any`) - Value for comparison. Can not be an object or undefined. User can set it as `options.arg`.
+                              If you use 'arg' in your validator you must be sure that user will specify this value
 
 - **options** (`Object`) - Options
-  * comparedValue (`Any`) - Will be set if comparedValue is specified
+  * arg (`Any`) - Will be set if 'arg' is specified
   * message (`Any`) - Override error message
   * parse (`Function`) - Can change input value before validation
   * (`Any`) - Any custom options
