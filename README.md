@@ -97,6 +97,7 @@ validators.minStrict(null, 3);
 ### Validators([options])
 
 - **options** (`Object`)
+  * arg (`String`) - name of argument for compared values. By default: `arg`
   * formatStr (`Function`) - Custom template parser. *params:* `templateStr`, `variablesObj`. *returns:* `str`
   * errorFormat (`Object`) - Output format of error. By default:
 ```js
