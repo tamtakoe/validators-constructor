@@ -163,8 +163,8 @@ Validators.prototype.add = function (name, validator) {
                         validator = _this[base]; break;
 
                     case 'object':
-                        validator = _this[base.validator];
-                        options = Object.assign({}, options, base.options);
+                        validator = _this[base[0]];
+                        options = Object.assign({}, options, base[1]);
                 }
 
                 var error = validator.apply(this, [value, options].concat(args));

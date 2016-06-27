@@ -169,7 +169,7 @@ describe('validator', function() {
                 }
             },
             valid: 'isValid',
-            myValidator: [{validator: 'valid', options: {strict: true}}, function(value) {
+            myValidator: [['valid', {strict: true}], function(value) {
                 return 'OK'
             }]
         });
@@ -187,7 +187,7 @@ describe('validator', function() {
                 }
             },
             valid: 'isValid',
-            myValidator: [{validator: 'valid', options: {strict: true}}, function(value) {
+            myValidator: [['valid', {strict: true}], function(value) {
                 return 'OK'
             }]
         });
@@ -261,3 +261,5 @@ describe('validator', function() {
         expect(error.message).to.equal('invalid');
     });
 });
+
+

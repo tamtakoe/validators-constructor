@@ -56,8 +56,8 @@ validators.load({
     },
 
     //Chain of validators
-    minStrict: ['required', {validator:'number', options:{strict: true}}, function(val, cVal, opts) {
-        if (val < cVal) {
+    minStrict: ['required', ['number', {strict: true}], function(value, arg, opts) {
+        if (value < arg) {
             return '%{value} is too short (minimum is %{arg})';
         }
     }],
@@ -122,7 +122,7 @@ options which validator returns instead string (except options that end in Messa
 
 - **validatorName** (`String`) - Name of validator in validators instance
 
-- **validator** (`Function` or `String` or `Array`) - Validator or alias or validators array
+- **validator** (`Function` or `String` or `Array`) - Validator or alias or validators array (e.g. ['validatorName'] or [['validatorName', {...options}]])
 
 - **return** (`Validators`) instance of Validators
 
