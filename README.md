@@ -123,7 +123,7 @@ options which validator returns instead string (except options that end in Messa
 - **validatorName** (`String`) - Name of validator in validators instance
 
 - **validator** (`Function` or `String` or `Array`) - Validator or alias or validators array
-                                                      (e.g. ['validatorName', ['validatorName', {...options}], ...])
+                                                      (e.g. ['validatorName', ['validatorName', {...options}], validatorFn])
 
 - **return** (`Validators`) instance of Validators
 
