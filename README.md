@@ -19,7 +19,7 @@ const Validators = require('validators-constructor');
 const validators = Validators();
 
 validators.load({
-    //Simple validator
+    /* Simple validator */
     maxLength: function(value, arg, options) {
         //arg can not be an object or undefined. In this situation it will be options
         //arg also is available as options.arg
@@ -30,7 +30,7 @@ validators.load({
     },
     lengthMax: 'maxLength', //alias for `maxLength`
 
-    //Validate by several params
+    /* Validate by several params */
     range: function(value, options) {
         var typeNumberError = this.number(value) //you can find any validator in `this`
 
@@ -55,7 +55,7 @@ validators.load({
         }
     },
 
-    //Chain of validators
+    /* Chain of validators */
     minStrict: ['required', ['number', {strict: true}], function(value, arg, opts) {
         if (value < arg) {
             return '%{value} is too short (minimum is %{arg})';
