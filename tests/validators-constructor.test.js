@@ -63,19 +63,39 @@ describe('validator', function() {
 
     it('options should be an object', function() {
         validators.add('isValid', function(value, options) {
-            expect(options).to.be.object;
+            if (({}).toString.call(options) !== '[object Object]') {
+                return 'invalid';
+            }
         });
 
-        validators.isValid();
+        expect(validators.isValid(1)).to.be.undefined;
+        expect(validators.isValid(1, null)).to.be.undefined;
+        expect(validators.isValid(1, true)).to.be.undefined;
+        expect(validators.isValid(1, false)).to.be.undefined;
+        expect(validators.isValid(1, {})).to.be.undefined;
+    });
 
+    it('options should be an arg', function() {
+        validators.add('isValid', function(value, options) {
+            if (({}).toString.call(options) === '[object Object]') {
+                return 'invalid';
+            }
+        });
+
+        expect(validators.isValid(1, 0)).to.be.undefined;
+        expect(validators.isValid(1, '')).to.be.undefined;
+        expect(validators.isValid(1, [])).to.be.undefined;
+        expect(validators.isValid(1, /regexp/)).to.be.undefined;
     });
 
     it('should set arg to options', function() {
         validators.add('isValid', function(value, arg, options) {
-            expect(options.arg).to.equal(2);
+            if (options.arg !== 2) {
+                return 'invalid';
+            }
         });
 
-        validators.isValid(1, 2);
+        expect(validators.isValid(1, 2)).to.be.undefined;
     });
 
     it('value should be enabled for string format', function() {
@@ -234,24 +254,31 @@ describe('validator', function() {
 
     it('should pass arguments in validator', function() {
         validators.add('isValid', function(value) {
-            expect(Array.prototype.slice.call(arguments)).to.deep.equal([1, {}, 3, 4]);
+            return {
+                message: arguments
+            };
         });
 
-        validators.isValid(1, {}, 3, 4);
+        const error = validators.isValid(1, {}, 3, 4);
+        expect(Array.prototype.slice.call(error.message)).to.deep.equal([1, {}, 3, 4]);
     });
 
     it('should pass arguments and arg in validator', function() {
         validators.add('isValid', function(value) {
-            expect(Array.prototype.slice.call(arguments)).to.deep.equal([1, 2, {arg: 2}, 4]);
+            return {
+                message: arguments
+            };
         });
 
-        validators.isValid(1, 2, null, 4);
+        const error = validators.isValid(1, 2, null, 4);
+        expect(Array.prototype.slice.call(error.message)).to.deep.equal([1, 2, {arg: 2}, 4]);
     });
 
     it('should work without this', function() {
         validators.add('isValid', function(value) {
-            expect(this.isValid).to.be.a('function');
-            return 'invalid';
+            if (typeof this.isValid === 'function') {
+                return 'invalid';
+            }
         });
 
         validators.add('valid', 'isValid');

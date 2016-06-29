@@ -172,14 +172,19 @@ Validators.prototype.add = function (name, validator, params) {
         _this[name] = function(value /*arg, options*/) {
             let options;
             let args = Array.prototype.slice.call(arguments, 2);
-            
+            let arg1 = arguments[1];
+
             _this = this && this._this || _this;
 
-            if (arguments[1] === undefined || ({}).toString.call(arguments[1]) === '[object Object]') {
-                options = arguments[1] || {};
+            if (!arg1 && arg1 !== 0 && arg1 !== '' || arg1 === true) {
+                options = {};
+
+            } else if (({}).toString.call(arg1) === '[object Object]') {
+                options = arg1;
+
             } else {
                 options = arguments[2] || {};
-                options[_this.arg] = arguments[1];
+                options[_this.arg] = arg1;
                 args.shift();
             }
 

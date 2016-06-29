@@ -21,7 +21,7 @@ const validators = Validators();
 validators.load({
     /* Simple validator */
     maxLength: function(value, arg, options) {
-        //arg can not be an object or undefined. In this situation it will be options
+        //arg have to exist and can not be an object or true. Otherwise it will be options
         //arg also is available as options.arg
 
         if ((isString(value) || isArray(value)) && value.length > arg) {
@@ -179,8 +179,9 @@ options which validator returns instead string (except options that end in Messa
 
 - **value** (`Any`) - Validated value
 
-- **arg** (`Any`) - Value for comparison. Can not be an object or undefined. User can set it as `options.arg`.
-                              If you use 'arg' in your validator you must be sure that user will specify this value
+- **arg** (`Any`) - Value for comparison. Have to exist and can not be an object or true.
+                    User can set it as `options.arg`.
+                    If you use 'arg' in your validator you must be sure that user will specify this value
 
 - **options** (`Object`) - Options
   * arg (`Any`) - Will be set if 'arg' is specified
