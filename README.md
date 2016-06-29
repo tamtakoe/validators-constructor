@@ -97,7 +97,7 @@ You can handle validation result in `resultHandler`. It is useful for third part
 
 ```js
 const validatorJS = require('validator'); //https://github.com/chriso/validator.js
-//These validators return true if valid, false in opposite case and throw exception if value isn't string
+//These validators return true if valid, false in opposite case and can throw exception
 
 validators.load(validatorJS, {
     resultHandler: function(result) {
