@@ -114,7 +114,7 @@ validators.isEmail('abc', 3);
 }
 */
 
-validators.isEmail(null, 3); //catch exeption
+validators.isEmail(null, 3); //catch exception by default
 /* returns:
 {
     message: 'This library (validator.js) validates strings only',
