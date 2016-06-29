@@ -96,7 +96,8 @@ Validator have to return error message if value is invalid and nothing in opposi
 You can handle validation result in `resultHandler`. It is useful for third party validators
 
 ```js
-const validatorJS = require('validator'); //https://github.com/chriso/validator.js returns true if valid
+const validatorJS = require('validator'); //https://github.com/chriso/validator.js
+//These validators return true if valid, false in opposite case and throw exception if value isn't string
 
 validators.load(validatorJS, {
     resultHandler: function(result) {
