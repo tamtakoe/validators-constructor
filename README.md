@@ -92,12 +92,45 @@ validators.minStrict(null, 3);
 */
 ```
 
+Validator have to return error message if value is invalid and nothing in opposite case.
+You can handle validation result in `resultHandler`. It is useful for third party validators
+
+```js
+const validatorJS = require('validator'); //https://github.com/chriso/validator.js returns true if valid
+
+validators.load(validatorJS, {
+    resultHandler: function(result) {
+        if (!result) {
+            return '%{value} is not %{validator}'
+        }
+    }
+});
+
+validators.isEmail('abc', 3);
+/* returns:
+{
+    message: 'abc is not isEmail',
+    error: 'isEmail'
+}
+*/
+
+validators.isEmail(null, 3); //catch exeption
+/* returns:
+{
+    message: 'This library (validator.js) validates strings only',
+    error: 'isEmail'
+}
+*/
+```
+
 ## API
 
-### Validators([options])
+### Validators([params])
 
-- **options** (`Object`)
+- **params** (`Object`)
   * arg (`String`) - name of argument for compared values. By default: `arg`
+  * resultHandler (`Function` ) - handler of validation result. By default `function(result) { return result }`
+  * exceptionHandler (`Function` or `String`) - handler of JS exceptions or `'none'`. By default `function(err) { return err }` will return error message in standard format
   * formatStr (`Function`) - Custom template parser. *params:* `templateStr`, `variablesObj`. *returns:* `str`
   * errorFormat (`Object`) - Output format of error. By default:
 ```js
@@ -118,12 +151,14 @@ options which validator returns instead string (except options that end in Messa
 - **return** (`Validators`) new instance of Validators
 
 
-### validators.add(validatorName, validator)
+### validators.add(validatorName, validator, [params])
 
 - **validatorName** (`String`) - Name of validator in validators instance
 
 - **validator** (`Function` or `String` or `Array`) - Validator or alias or validators array
                                                       (e.g. ['validatorName', ['validatorName', {...options}], validatorFn])
+
+- **params** (`Object`) validator params (see Validators params). Also you can set default 'message' in params
 
 - **return** (`Validators`) instance of Validators
 
@@ -132,6 +167,8 @@ options which validator returns instead string (except options that end in Messa
 ### validators.load(validatorsObj)
 
 - **validatorsObj** (`Object`) - Object has structure `{validatorName: validator, ...}`
+
+- **params** (`Object`) validator params (see Validators params). Also you can set default 'message' in params
 
 - **return** (`Validators`) instance of Validators
 

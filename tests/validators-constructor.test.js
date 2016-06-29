@@ -260,6 +260,64 @@ describe('validator', function() {
         expect(error.error).to.equal('valid');
         expect(error.message).to.equal('invalid');
     });
+
+    it('should redefine validation result', function() {
+        const myValidators = {
+            exist: function(value) {
+                return !!value;
+            }
+        };
+
+        validators.load(myValidators, {
+            resultHandler: function(result) {
+                if (!result) {
+                    return '%{value} is not %{validator}'
+                }
+            }
+        });
+
+        const error = validators.exist(null);
+        expect(error.error).to.equal('exist');
+        expect(error.message).to.equal('null is not exist');
+    });
+
+    it('should show exception in message by defailt', function() {
+        validators.add('minLength', function(value, arg) {
+            return value.length >= arg;
+        });
+
+        var error = validators.minLength(null, 5);
+        expect(error.error).to.equal('minLength');
+        expect(error.message).to.equal('Cannot read property \'length\' of null');
+    });
+
+    it('should redefine exception handler', function() {
+        const myValidators = {
+            minLength: function(value, arg) {
+                return value.length >= arg;
+            },
+            maxLength: function(value, arg) {
+                return value.length <= arg;
+            }
+        };
+
+        validators.add('minLength', myValidators.minLength, {
+            exceptionHandler: function (err) {}
+        });
+
+        validators.add('maxLength', myValidators.maxLength, {
+            exceptionHandler: 'none'
+        });
+
+        var error = validators.minLength(null, 5);
+        expect(error).to.be.undefined;
+
+        try {
+            validators.maxLength(null, 5);
+        } catch(err) {
+            expect(err).to.be.instanceof(TypeError);
+        }
+    });
 });
 
 
