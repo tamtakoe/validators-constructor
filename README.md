@@ -179,7 +179,7 @@ options which validator returns instead string (except options that end in Messa
 
 - **value** (`Any`) - Validated value
 
-- **arg** (`Any`) - Value for comparison. Have to exist and can not be an object or true.
+- **arg** (`Any`) - Value for comparison. Have to exist and can not be an object or boolean.
                     User can set it as `options.arg`.
                     If you use 'arg' in your validator you must be sure that user will specify this value
 
