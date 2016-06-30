@@ -176,7 +176,7 @@ Validators.prototype.add = function (name, validator, params) {
 
             _this = this && this._this || _this;
 
-            if (!arg1 && arg1 !== 0 && arg1 !== '' || arg1 === true) {
+            if (arg1 == null || typeof arg1 === 'boolean') {
                 options = {};
 
             } else if (({}).toString.call(arg1) === '[object Object]') {
