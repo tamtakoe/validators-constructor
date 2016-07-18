@@ -171,20 +171,19 @@ function Validators(params) {
  */
 Validators.prototype.add = function (name, validator, params) {
     var _this = this;
+    var validators = validator instanceof Array ? validator : [validator];
+    var validate = void 0;
 
     if (typeof validator === 'string') {
-        _this[name] = function () /*value, arg, options*/{
+        validate = function validate() /*value, arg, options*/{
             return _this[validator].apply({ alias: name, _this: _this }, arguments);
         };
     } else {
-        var validators = validator instanceof Array ? validator : [validator];
-
-        _this[name] = function (value /*arg, options*/) {
-            var options = void 0;
+        validate = function validate(value /*arg, options*/) {
             var args = Array.prototype.slice.call(arguments, 2);
             var arg1 = arguments[1];
-
-            _this = this && this._this || _this;
+            var _this2 = this && this._this || _this;
+            var options = void 0;
 
             if (arg1 == null || typeof arg1 === 'boolean') {
                 options = {};
@@ -192,7 +191,7 @@ Validators.prototype.add = function (name, validator, params) {
                 options = arg1;
             } else {
                 options = arguments[2] || {};
-                options[_this.arg] = arg1;
+                options[_this2.arg] = arg1;
                 args.shift();
             }
 
@@ -201,13 +200,13 @@ Validators.prototype.add = function (name, validator, params) {
 
                 switch (typeof base === 'undefined' ? 'undefined' : _typeof(base)) {
                     case 'function':
-                        validator = validatorWrapper(_this, name, base);break;
+                        validator = validatorWrapper(_this2, name, base);break;
 
                     case 'string':
-                        validator = _this[base];break;
+                        validator = _this2[base];break;
 
                     case 'object':
-                        validator = _this[base[0]];
+                        validator = _this2[base[0]];
                         options = Object.assign({}, options, base[1]);
                 }
 
@@ -220,7 +219,17 @@ Validators.prototype.add = function (name, validator, params) {
         };
     }
 
-    Object.assign(_this[name], params);
+    Object.assign(validate, params);
+
+    validate.curry = function () /*arg, options*/{
+        var _arguments = arguments;
+        //Partial application
+        return function (value) {
+            return validate.apply(_this, [value].concat(Array.prototype.slice.call(_arguments)));
+        };
+    };
+
+    _this[name] = validate;
 
     return _this;
 };
@@ -232,10 +241,10 @@ Validators.prototype.add = function (name, validator, params) {
  * @returns {Validators} Validators instance
  */
 Validators.prototype.load = function (validatorsObj, params) {
-    var _this2 = this;
+    var _this3 = this;
 
     Object.keys(validatorsObj).forEach(function (key) {
-        return _this2.add(key, validatorsObj[key], params);
+        return _this3.add(key, validatorsObj[key], params);
     });
 
     return this;
@@ -250,7 +259,7 @@ Validators.prototype.load = function (validatorsObj, params) {
  * @returns {String|Object} formatted string or object
  */
 Validators.prototype.formatMessage = function (message, values) {
-    var _this3 = this;
+    var _this4 = this;
 
     if (typeof message === 'function') {
         message = message(values.value, values);
@@ -260,7 +269,7 @@ Validators.prototype.formatMessage = function (message, values) {
         var formattedMessage = {};
 
         Object.keys(message).forEach(function (key) {
-            return formattedMessage[_this3.formatStr(key, values)] = _this3.formatStr(message[key], values);
+            return formattedMessage[_this4.formatStr(key, values)] = _this4.formatStr(message[key], values);
         });
 
         if (message[MESSAGE]) {
