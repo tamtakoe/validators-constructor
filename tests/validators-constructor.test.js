@@ -345,6 +345,19 @@ describe('validator', function() {
             expect(err).to.be.instanceof(TypeError);
         }
     });
+
+    it('should to do carrying by curry method', function() {
+        validators.add('min', function(value, arg, options) {
+            if (value < arg) {
+                return 'Error'
+            }
+        });
+
+        var minThenFive = validators.min.curry(5);
+
+        expect(minThenFive(6)).to.be.undefined;
+        expect(minThenFive(1)).to.have.property('message');
+    });
 });
 
 

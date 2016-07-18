@@ -159,22 +159,21 @@ function Validators(params) {
  * @returns {Validators} Validators instance
  */
 Validators.prototype.add = function (name, validator, params) {
-    var _this = this;
+    const _this = this;
+    const validators = validator instanceof Array ? validator : [validator];
+    let validate;
 
     if (typeof validator === 'string') {
-        _this[name] = function(/*value, arg, options*/) {
+        validate = function(/*value, arg, options*/) {
             return _this[validator].apply({alias: name, _this: _this}, arguments);
         };
 
     } else {
-        var validators = validator instanceof Array ? validator : [validator];
-
-        _this[name] = function(value /*arg, options*/) {
+        validate = function(value /*arg, options*/) {
+            const args = Array.prototype.slice.call(arguments, 2);
+            const arg1 = arguments[1];
+            const _this2 = this && this._this || _this;
             let options;
-            let args = Array.prototype.slice.call(arguments, 2);
-            let arg1 = arguments[1];
-
-            _this = this && this._this || _this;
 
             if (arg1 == null || typeof arg1 === 'boolean') {
                 options = {};
@@ -184,7 +183,7 @@ Validators.prototype.add = function (name, validator, params) {
 
             } else {
                 options = arguments[2] || {};
-                options[_this.arg] = arg1;
+                options[_this2.arg] = arg1;
                 args.shift();
             }
 
@@ -193,13 +192,13 @@ Validators.prototype.add = function (name, validator, params) {
 
                 switch (typeof base) {
                     case 'function':
-                        validator = validatorWrapper(_this, name, base); break;
+                        validator = validatorWrapper(_this2, name, base); break;
 
                     case 'string':
-                        validator = _this[base]; break;
+                        validator = _this2[base]; break;
 
                     case 'object':
-                        validator = _this[base[0]];
+                        validator = _this2[base[0]];
                         options = Object.assign({}, options, base[1]);
                 }
 
@@ -212,7 +211,13 @@ Validators.prototype.add = function (name, validator, params) {
         };
     }
 
-    Object.assign(_this[name], params);
+    Object.assign(validate, params);
+
+    validate.curry = function(/*arg, options*/) { //Partial application
+        return value => validate.apply(_this, [value].concat(Array.prototype.slice.call(arguments)));
+    };
+
+    _this[name] = validate;
 
     return _this;
 };

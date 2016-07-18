@@ -194,6 +194,15 @@ options which validator returns instead string (except options that end in Messa
 - **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value is enabled as `value`, compared value - as `comparedValue`)
 
 
+
+### validator.curry([arg], [options])
+
+- **arg, options, etc.** - see validator.
+
+- **return** (`Function`) - function, which gets value and returns result of validation
+
+
+
 ## Tests
 
 ```sh
