@@ -227,9 +227,9 @@ validators.exists(null); //'Should be'
 - **return** (`Function`) - function, which gets value and returns result of validation
 
 ```js
-lessThen50 = validators.maxLength.curry(50);
+lessThen3 = validators.maxLength.curry(3);
 
-lessThen50(51) //Should be less then 50
+lessThen3('1234') //Length should be less then 3
 ```
 
 
