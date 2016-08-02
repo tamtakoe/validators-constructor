@@ -168,7 +168,7 @@ const validators = require('validators-constructor')({errorFormat: '%{message}'}
 
 ```js
 validators.add('exists', function(value) {
-    return value && 'Does not exist';
+    return !value && 'Should be';
 })
 ```
 
@@ -185,10 +185,10 @@ validators.add('exists', function(value) {
 ```js
 validators.load({
     exists: function(value) {
-        return value && 'Should be';
+        return !value && 'Should be';
     },
     notExists: function(value) {
-        return !value && 'Should not be';
+        return value && 'Should not be';
     }
 )
 ```
