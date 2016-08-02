@@ -154,6 +154,7 @@ options which validator returns instead string (except options that end in Messa
 const validators = require('validators-constructor')({errorFormat: '%{message}'})
 ```
 
+--
 
 ### validators.add(validatorName, validator, [params])
 
@@ -172,7 +173,7 @@ validators.add('exists', function(value) {
 })
 ```
 
-
+--
 
 ### validators.load(validatorsObj)
 
@@ -193,7 +194,7 @@ validators.load({
 )
 ```
 
-
+--
 
 ### validator(value, [arg], [options])
 
@@ -217,7 +218,7 @@ validators.load({
 validators.exists(null); //'Should be'
 ```
 
-
+--
 
 ### validator.curry([arg], [options])
 
