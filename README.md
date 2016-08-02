@@ -15,8 +15,7 @@ npm install validators-constructor
 ## Usage
 
 ```js
-const Validators = require('validators-constructor');
-const validators = Validators();
+const validators = require('validators-constructor')();
 
 validators.load({
     /* Simple validator */
@@ -151,6 +150,10 @@ options which validator returns instead string (except options that end in Messa
 
 - **return** (`Validators`) new instance of Validators
 
+```js
+const validators = require('validators-constructor')({errorFormat: '%{message}'})
+```
+
 
 ### validators.add(validatorName, validator, [params])
 
@@ -163,6 +166,12 @@ options which validator returns instead string (except options that end in Messa
 
 - **return** (`Validators`) instance of Validators
 
+```js
+validators.add('exists', function(value) {
+    return value && 'Does not exist';
+})
+```
+
 
 
 ### validators.load(validatorsObj)
@@ -172,6 +181,17 @@ options which validator returns instead string (except options that end in Messa
 - **params** (`Object`) validator params (see Validators params). Also you can set default 'message' in params
 
 - **return** (`Validators`) instance of Validators
+
+```js
+validators.load({
+    exists: function(value) {
+        return value && 'Should be';
+    },
+    notExists: function(value) {
+        return !value && 'Should not be';
+    }
+)
+```
 
 
 
@@ -193,6 +213,10 @@ options which validator returns instead string (except options that end in Messa
 
 - **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value is enabled as `value`, compared value - as `comparedValue`)
 
+```js
+validators.exists(null); //'Should be'
+```
+
 
 
 ### validator.curry([arg], [options])
@@ -200,6 +224,12 @@ options which validator returns instead string (except options that end in Messa
 - **arg, options, etc.** - see validator.
 
 - **return** (`Function`) - function, which gets value and returns result of validation
+
+```js
+lessThen50 = validators.maxLength.curry(50);
+
+lessThen50(51) //Should be less then 50
+```
 
 
 
