@@ -60,7 +60,9 @@ function validatorWrapper(validators, name, validator) {
                 error = message;
             }
 
-            let formattedErrorMessage = validators.formatMessage(error, Object.assign({validator: alias || name, value: value}, options));
+            let formattedErrorMessage = validators.formatMessage(error, Object.assign(
+                {validator: alias || name, value: value}, options)
+            );
             let format = validatorObj[ERROR_FORMAT] || validatorAliasObj[ERROR_FORMAT] || validators[ERROR_FORMAT];
 
             if (format) {
@@ -76,13 +78,13 @@ function validatorWrapper(validators, name, validator) {
                             format[key] = options[key];
                         }
                     });
-                    delete format.$options;
                 }
+                delete format.$options;
 
                 if (format.$origin) {
                     format = Object.assign({}, format, formattedErrorMessage);
-                    delete format.$origin;
                 }
+                delete format.$origin;
 
                 return validators.formatMessage(format, Object.assign(
                     {validator: alias || name, value: value}, options, formattedErrorMessage
@@ -110,6 +112,17 @@ function formatStr(str, values) {
     }
 
     return str.replace(FORMAT_REGEXP, (m0, m1, m2) => (m1 === '%' ? "%{" + m2 + "}" : values[m2]));
+}
+
+/**
+ * Check that value is plain object
+ *
+ * @param {Any} value
+ *
+ * @returns {Boolean}
+ */
+function isPlainObject(value) {
+    return {}.toString.call(value) === '[object Object]';
 }
 
 /**
@@ -172,21 +185,19 @@ Validators.prototype.add = function (name, validator, params) {
         validate = function(value /*arg, options*/) {
             const args = Array.prototype.slice.call(arguments, 2);
             const arg1 = arguments[1];
+            const arg2 = arguments[2];
             const _this2 = this && this._this || _this;
-            let options;
+            let options = isPlainObject(arg2) ? arg2 : {};
 
-            if (arg1 == null || typeof arg1 === 'boolean') {
-                options = {};
-
-            } else if (({}).toString.call(arg1) === '[object Object]') {
-                options = arg1;
-
-            } else {
-                options = arguments[2] || {};
-                options[_this2.arg] = arg1;
-                args.shift();
+            if (arg1 != null && typeof arg1 !== 'boolean') {
+                if (isPlainObject(arg1)) {
+                    options = arg1;
+                } else {
+                    options[_this2.arg] = arg1;
+                    args.shift();
+                }
             }
-
+            
             for (var i = 0; i < validators.length; i++) {
                 var base = validators[i];
 

@@ -80,13 +80,13 @@ function validatorWrapper(validators, name, validator) {
                                 format[key] = options[key];
                             }
                         });
-                        delete format.$options;
                     }
+                    delete format.$options;
 
                     if (format.$origin) {
                         format = Object.assign({}, format, formattedErrorMessage);
-                        delete format.$origin;
                     }
+                    delete format.$origin;
 
                     return {
                         v: validators.formatMessage(format, Object.assign({ validator: alias || name, value: value }, options, formattedErrorMessage))
@@ -121,6 +121,17 @@ function formatStr(str, values) {
     return str.replace(FORMAT_REGEXP, function (m0, m1, m2) {
         return m1 === '%' ? "%{" + m2 + "}" : values[m2];
     });
+}
+
+/**
+ * Check that value is plain object
+ *
+ * @param {Any} value
+ *
+ * @returns {Boolean}
+ */
+function isPlainObject(value) {
+    return {}.toString.call(value) === '[object Object]';
 }
 
 /**
@@ -182,17 +193,17 @@ Validators.prototype.add = function (name, validator, params) {
         validate = function validate(value /*arg, options*/) {
             var args = Array.prototype.slice.call(arguments, 2);
             var arg1 = arguments[1];
+            var arg2 = arguments[2];
             var _this2 = this && this._this || _this;
-            var options = void 0;
+            var options = isPlainObject(arg2) ? arg2 : {};
 
-            if (arg1 == null || typeof arg1 === 'boolean') {
-                options = {};
-            } else if ({}.toString.call(arg1) === '[object Object]') {
-                options = arg1;
-            } else {
-                options = arguments[2] || {};
-                options[_this2.arg] = arg1;
-                args.shift();
+            if (arg1 != null && typeof arg1 !== 'boolean') {
+                if (isPlainObject(arg1)) {
+                    options = arg1;
+                } else {
+                    options[_this2.arg] = arg1;
+                    args.shift();
+                }
             }
 
             for (var i = 0; i < validators.length; i++) {

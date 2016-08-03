@@ -37,6 +37,68 @@ describe('validators', function() {
         expect(validators.validator1).to.be.function;
         expect(validators.validator2).to.be.function;
     });
+
+    it('should set options if errorFormat.$options is true and options is plain object', function() {
+        validators.add('isEqual', function(value, arg, options) {
+            if (value !== options.arg) {
+                return 'not equal';
+            }
+        }, {
+            errorFormat: {
+                $options: true
+            }
+        });
+
+        const error1 = validators.isEqual(1, 2, {'strict': true});
+        const error2 = validators.isEqual(1, 2, ['a', 'b']);
+        expect(error1.strict).to.be.true;
+        expect(error2[0]).to.be.undefined;
+    });
+
+    it('should not set options if errorFormat.$options is false', function() {
+        validators.add('isEqual', function(value, arg, options) {
+            if (value !== options.arg) {
+                return 'not equal';
+            }
+        }, {
+            errorFormat: {
+                $options: false
+            }
+        });
+
+        const error = validators.isEqual(1, 2, {'strict': true});
+        expect(error.strict).to.be.undefined;
+    });
+
+    it('should set error fields to message if errorFormat.$origin is true', function() {
+        validators.add('isEqual', function(value, arg, options) {
+            if (value !== options.arg) {
+                return { text: 'not equal' };
+            }
+        }, {
+            errorFormat: {
+                $origin: true
+            }
+        });
+
+        const error = validators.isEqual(1, 2);
+        expect(error.text).to.equal('not equal');
+    });
+
+    it('should not set error fields to message if errorFormat.$origin is false', function() {
+        validators.add('isEqual', function(value, arg, options) {
+            if (value !== options.arg) {
+                return { text: 'not equal' };
+            }
+        }, {
+            errorFormat: {
+                $origin: false
+            }
+        });
+
+        const error = validators.isEqual(1, 2);
+        expect(error.text).to.be.undefined;
+    });
 });
 
 describe('validator', function() {
