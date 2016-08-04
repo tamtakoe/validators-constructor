@@ -215,7 +215,7 @@ validators.load({
 - **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value is enabled as `value`, compared value - as `comparedValue`)
 
 ```js
-validators.exists(null); //'Should be'
+validators.min(4, 5, {strict: false}); //'Should be less or equal 5'
 ```
 
 --
