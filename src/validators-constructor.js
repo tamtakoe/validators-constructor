@@ -156,9 +156,6 @@ function Validators(params) {
     this.resultHandler = function(result) {
         return result;
     };
-    this.exceptionHandler = function(err) {
-        return err;
-    };
     this.arg = 'arg';
 
     Object.assign(this, params);

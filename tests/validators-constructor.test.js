@@ -370,9 +370,13 @@ describe('validator', function() {
         expect(error.message).to.equal('null is not exist');
     });
 
-    it('should show exception in message by defailt', function() {
+    it('should show exception in message through exceptionHandler', function() {
         validators.add('minLength', function(value, arg) {
             return value.length >= arg;
+        }, {
+            exceptionHandler: function(err) {
+                return err;
+            }
         });
 
         var error = validators.minLength(null, 5);
