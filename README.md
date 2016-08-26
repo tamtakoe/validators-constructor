@@ -159,9 +159,11 @@ const validators = require('validators-constructor')({errorFormat: '%{message}'}
 
 --
 
-### validators.add(validatorName, validator, [params])
+### validators.add(validatorName, validator, [params]) or (validators, [params])
 
 - **validatorName** (`String`) - Name of validator in validators instance
+
+- **validators** (`Object`) - Object has structure `{validatorName: validator, ...}`
 
 - **validator** (`Function` or `String` or `Array`) - Validator or alias or validators array
                                                       (e.g. ['validatorName', ['validatorName', {...options}], validatorFn])
@@ -174,27 +176,15 @@ const validators = require('validators-constructor')({errorFormat: '%{message}'}
 validators.add('exists', function(value) {
     return !value && 'Should be';
 })
-```
 
---
-
-### validators.load(validatorsObj)
-
-- **validatorsObj** (`Object`) - Object has structure `{validatorName: validator, ...}`
-
-- **params** (`Object`) validator params (see Validators params). Also you can set default 'message' in params
-
-- **return** (`Validators`) instance of Validators
-
-```js
-validators.load({
+validators.add({
     exists: function(value) {
         return !value && 'Should be';
     },
     notExists: function(value) {
         return value && 'Should not be';
     }
-)
+})
 ```
 
 --

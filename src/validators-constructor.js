@@ -122,7 +122,8 @@ function formatStr(str, values) {
  * @returns {Boolean}
  */
 function isPlainObject(value) {
-    return {}.toString.call(value) === '[object Object]';
+    return {}.toString.call(value) === '[object Object]'
+        && (typeof value.toDate !== 'function' || value.propertyIsEnumerable('toDate')); //For moment.js dates
 }
 
 /**
@@ -168,7 +169,7 @@ function Validators(params) {
  *
  * @returns {Validators} Validators instance
  */
-Validators.prototype.add = function (name, validator, params) {
+function addValidator(name, validator, params) {
     const _this = this;
     const validators = validator instanceof Array ? validator : [validator];
     let validate;
@@ -226,18 +227,21 @@ Validators.prototype.add = function (name, validator, params) {
     };
 
     _this[name] = validate;
-
-    return _this;
-};
+}
 
 /**
- * @param {Object} validatorsObj. F.e. {validator1: validator1Fn, validator2: validator2Fn, ...}
+ * @param {String|Object} validatorName or validators map like {validator1: validator1Fn, validator2: validator2Fn, ...}
  * @param {Object} params for every validator
  *
  * @returns {Validators} Validators instance
  */
-Validators.prototype.load = function(validatorsObj, params) {
-    Object.keys(validatorsObj).forEach(key => this.add(key, validatorsObj[key], params));
+Validators.prototype.add = function(validatorName, validators, params) {
+    if (typeof validatorName === 'string') {
+        addValidator.call(this, validatorName, validators, params);
+        
+    } else {
+        Object.keys(validatorName).forEach(key => addValidator.call(this, key, validatorName[key], validators));
+    }
 
     return this;
 };

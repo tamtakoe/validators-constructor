@@ -20,8 +20,8 @@ describe('validators', function() {
         expect(validators.myValidator).to.be.function;
     });
 
-    it('should load validators', function() {
-        validators.load({
+    it('should add validators', function() {
+        validators.add({
             validator1: function(value) {
                 if (!value) {
                     return 'must to be';
@@ -228,7 +228,7 @@ describe('validator', function() {
     });
 
     it('should work with complex validator with aliases', function() {
-        validators.load({
+        validators.add({
             isValid: function(value) {
                 return 'invalid'
             },
@@ -244,7 +244,7 @@ describe('validator', function() {
     });
 
     it('should work with complex validator with objects', function() {
-        validators.load({
+        validators.add({
             isValid: function(value, options) {
                 if (options.strict) {
                     return 'invalid'
@@ -262,7 +262,7 @@ describe('validator', function() {
     });
 
     it('should work with complex validator with objects and arg', function() {
-        validators.load({
+        validators.add({
             isValid: function(value, arg, options) {
                 if (options.strict) {
                     return 'invalid'
@@ -357,7 +357,7 @@ describe('validator', function() {
             }
         };
 
-        validators.load(myValidators, {
+        validators.add(myValidators, {
             resultHandler: function(result) {
                 if (!result) {
                     return '%{value} is not %{validator}'
