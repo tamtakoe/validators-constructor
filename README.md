@@ -17,7 +17,7 @@ npm install validators-constructor
 ```js
 const validators = require('validators-constructor')();
 
-validators.load({
+validators.add({
     /* Simple validator */
     maxLength: function(value, arg, options) {
         //arg have to exist and can not be an object or true. Otherwise it will be options
@@ -98,7 +98,7 @@ You can handle validation result in `resultHandler`. It is useful for third part
 const validatorJS = require('validator'); //https://github.com/chriso/validator.js
 //These validators return true if valid, false in opposite case and can throw exception
 
-validators.load(validatorJS, {
+validators.add(validatorJS, {
     resultHandler: function(result) {
         if (!result) {
             return '%{value} is not %{validator}'
