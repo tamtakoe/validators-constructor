@@ -30,7 +30,7 @@ validators.add({
     lengthMax: 'maxLength', //alias for `maxLength`
 
     /* Validate by several params */
-    range: function(value, options) {
+    myRange: function(value, options) {
         var typeNumberError = this.number(value) //you can find any validator in `this`
 
         if (typeNumberError) {
