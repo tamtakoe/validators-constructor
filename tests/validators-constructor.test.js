@@ -424,6 +424,22 @@ describe('validator', function() {
         expect(minThenFive(6)).to.be.undefined;
         expect(minThenFive(1)).to.have.property('message');
     });
+
+    it('should use arg without options', function() {
+        validators.add('min', function(value, arg, options) {
+            if (value < arg || options.hasError) {
+                return 'Error'
+            }
+        }, {
+            ignoreOptionsAfterArg: true
+        });
+
+        const error1 = validators.min(6, 5, {hasError: false});
+        const error2 = validators.min(6, 5, {hasError: true});
+
+        expect(error1).to.be.undefined;
+        expect(error2).to.be.undefined;
+    });
 });
 
 
