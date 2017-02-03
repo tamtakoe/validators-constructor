@@ -11,7 +11,7 @@ const RESULT_HANDLER = 'resultHandler';
 const EXCEPTION_HANDLER = 'exceptionHandler';
 const ERROR_FORMAT = 'errorFormat';
 const MESSAGE = 'message';
-const IGNORE_OPTIONS_AFTER_ARG = 'ignoreOptionsAfterArg';
+const SIMPLE_ARGS_FORMAT = 'simpleArgsFormat';
 const ARG = 'arg';
 
 /**
@@ -30,6 +30,7 @@ function validatorWrapper(validators, name, validator) {
         const validatorObj = validators[name];
         const validatorAliasObj = alias ? validators[alias] : {};
         const arg = validatorObj[ARG] || validatorAliasObj[ARG] || validators[ARG];
+        const isSimpleArgsFormat = validatorObj[SIMPLE_ARGS_FORMAT] || validatorAliasObj[SIMPLE_ARGS_FORMAT] || validators[SIMPLE_ARGS_FORMAT];
 
         options = Object.assign({}, validatorObj.defaultOptions, validatorAliasObj.defaultOptions, options);
 
@@ -37,7 +38,7 @@ function validatorWrapper(validators, name, validator) {
             value = options.parse(value);
         }
 
-        if (options.hasOwnProperty(arg)) {
+        if (options.hasOwnProperty(arg) && !isSimpleArgsFormat) {
             args = [value, options[arg]].concat(Array.prototype.slice.call(arguments, 1));
         }
 
@@ -57,6 +58,7 @@ function validatorWrapper(validators, name, validator) {
         }
 
         if (error) {
+            const errorObj = typeof error === 'object' ? error : null; //in case if we rewrite message in options and want to use fields from error object in the placeholders
             let message = options[MESSAGE] || validatorObj[MESSAGE] || validatorAliasObj[MESSAGE];
 
             if (message) {
@@ -64,8 +66,8 @@ function validatorWrapper(validators, name, validator) {
             }
 
             let formattedErrorMessage = validators.formatMessage(error, Object.assign(
-                {validator: alias || name, value: value}, options)
-            );
+                {validator: alias || name, value: value}, errorObj, options
+            ));
             let format = validatorObj[ERROR_FORMAT] || validatorAliasObj[ERROR_FORMAT] || validators[ERROR_FORMAT];
 
             if (format) {
@@ -137,6 +139,7 @@ function isPlainObject(value) {
  * @param {Function}          [formatStr] - for format message strings with patterns
  * @param {Function}          [resultHandler] - handle result of validation
  * @param {Function|String}   [exceptionHandler] - handle JS exceptions
+ * @param {String}            [simpleArgsFormat] - don't map arg to options.arg or vice versa
  * @param {String}            [arg] - name of compared value
  *
  * @constructor
@@ -189,10 +192,11 @@ function addValidator(name, validator, params) {
             const arg1 = arguments[1];
             const arg2 = arguments[2];
             const _this2 = this && this._this || _this;
-            let options = !(_this2[name][IGNORE_OPTIONS_AFTER_ARG] || _this2[IGNORE_OPTIONS_AFTER_ARG]) && isPlainObject(arg2) ? arg2 : {};
+            const isSimpleArgsFormat = _this2[name][SIMPLE_ARGS_FORMAT] || _this2[SIMPLE_ARGS_FORMAT];
+            let options = !simpleArgsFormat && isPlainObject(arg2) ? arg2 : {};
 
             if (arg1 != null && typeof arg1 !== 'boolean') {
-                if (isPlainObject(arg1)) {
+                if (isPlainObject(arg1) || isSimpleArgsFormat) {
                     options = arg1;
                 } else {
                     options[_this2[name][ARG] || _this2[ARG]] = arg1;

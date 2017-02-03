@@ -425,21 +425,98 @@ describe('validator', function() {
         expect(minThenFive(1)).to.have.property('message');
     });
 
-    it('should use arg without options', function() {
+    it('should use error params in the placeholder of overridden message', function() {
         validators.add('min', function(value, arg, options) {
-            if (value < arg || options.hasError) {
+            if (value < arg) {
+                return {
+                    message: 'Error',
+                    smth: 'X'
+                }
+            }
+        });
+
+        var error = validators.min(4, 5, {message: 'Error %{smth}'});
+
+        expect(error.message).to.equal('Error X');
+    });
+
+    it.only('should use simple arguments format', function() {
+        validators.add('min', function(value, options, settings) {
+            if (settings.showError) {
                 return 'Error'
             }
         }, {
-            ignoreOptionsAfterArg: true
+            simpleArgsFormat: true
         });
 
-        const error1 = validators.min(6, 5, {hasError: false});
-        const error2 = validators.min(6, 5, {hasError: true});
+        const error1 = validators.min(4, 5, {showError: true});
+        const error2 = validators.min(4, {v: 5}, {showError: true});
+        const error3 = validators.min(4, {arg: 5, v: 2}, {showError: true});
 
-        expect(error1).to.be.undefined;
-        expect(error2).to.be.undefined;
+        expect(error1.message).to.equal('Error');
+        expect(error2.message).to.equal('Error');
+        expect(error3.message).to.equal('Error');
+        expect(error1.showError).to.be.undefined;
+        expect(error2.showError).to.be.undefined;
+        expect(error3.showError).to.be.undefined;
     });
 });
-
-
+//
+//
+// var schema = {
+//     a: {
+//         $validate: {
+//             required: true,
+//             minLength: 10,
+//             maxLength: {
+//                 arg: 20
+//             }
+//         }
+//     }
+// };
+//
+// validator('abc', true, {},{},[])
+// validator('abc', 10, {},{},[])
+// validator('abc', {arg: 20}, {},{},[])
+//
+// validator.add('ololo', function(value, arg, options) {
+//     arg = true
+//     arg = 10
+//     options.arg = true
+//     options.arg = 10
+// })
+//
+// validator.add('ololo', function(value, options) {
+//     options.arg = true
+//     options.arg = 10
+// })
+//
+// function min(value, arg, options) {
+//     if (exists(value) && !(options.exclusive ? toNumber(value) > arg : toNumber(value) >= arg)) {
+//         return options.exclusive ? 'Must be more %{arg}' : 'Must be more or equal %{arg}';
+//     }
+// },
+//
+// function min(value, options) {
+//     if (exists(value) && !(options.exclusive ? toNumber(value) > options.arg : toNumber(value) >= options.arg)) {
+//         return options.exclusive ? 'Must be more %{arg}' : 'Must be more or equal %{arg}';
+//     }
+// },
+//
+//
+// minLength: 10, {wrong: true} -> arg = 10
+//
+// maxLength: {  -> arg = 10
+//     arg: 10
+// }, {wrong: true}
+//
+// maxLength: {  -> arg = 10; options: { arg: 10, smth: true }
+//     arg: 10,
+//     smth: true
+// }, {wrong: true}
+//
+// ololo: {      -> arg = undefined; options = { arg: undefined, smth: true }
+//     value: 10
+// }, {wrong: true}
+//
+// validators.add('ololo', function(value, options, object, fullObject, path) {})
