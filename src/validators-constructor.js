@@ -164,6 +164,9 @@ function Validators(params) {
     };
     this.formatStr = formatStr;
     this.resultHandler = function(result) {
+        if (typeof result === 'object' && typeof result.then === 'function') {
+            result.then(result => {}, error => error);
+        }
         return result;
     };
     this.arg = 'arg';
