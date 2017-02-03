@@ -440,7 +440,7 @@ describe('validator', function() {
         expect(error.message).to.equal('Error X');
     });
 
-    it.only('should use simple arguments format', function() {
+    it('should use simple arguments format', function() {
         validators.add('min', function(value, options, settings) {
             if (settings.showError) {
                 return 'Error'
@@ -461,62 +461,3 @@ describe('validator', function() {
         expect(error3.showError).to.be.undefined;
     });
 });
-//
-//
-// var schema = {
-//     a: {
-//         $validate: {
-//             required: true,
-//             minLength: 10,
-//             maxLength: {
-//                 arg: 20
-//             }
-//         }
-//     }
-// };
-//
-// validator('abc', true, {},{},[])
-// validator('abc', 10, {},{},[])
-// validator('abc', {arg: 20}, {},{},[])
-//
-// validator.add('ololo', function(value, arg, options) {
-//     arg = true
-//     arg = 10
-//     options.arg = true
-//     options.arg = 10
-// })
-//
-// validator.add('ololo', function(value, options) {
-//     options.arg = true
-//     options.arg = 10
-// })
-//
-// function min(value, arg, options) {
-//     if (exists(value) && !(options.exclusive ? toNumber(value) > arg : toNumber(value) >= arg)) {
-//         return options.exclusive ? 'Must be more %{arg}' : 'Must be more or equal %{arg}';
-//     }
-// },
-//
-// function min(value, options) {
-//     if (exists(value) && !(options.exclusive ? toNumber(value) > options.arg : toNumber(value) >= options.arg)) {
-//         return options.exclusive ? 'Must be more %{arg}' : 'Must be more or equal %{arg}';
-//     }
-// },
-//
-//
-// minLength: 10, {wrong: true} -> arg = 10
-//
-// maxLength: {  -> arg = 10
-//     arg: 10
-// }, {wrong: true}
-//
-// maxLength: {  -> arg = 10; options: { arg: 10, smth: true }
-//     arg: 10,
-//     smth: true
-// }, {wrong: true}
-//
-// ololo: {      -> arg = undefined; options = { arg: undefined, smth: true }
-//     value: 10
-// }, {wrong: true}
-//
-// validators.add('ololo', function(value, options, object, fullObject, path) {})

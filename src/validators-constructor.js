@@ -141,6 +141,7 @@ function isPlainObject(value) {
  * @param {Function|String}   [exceptionHandler] - handle JS exceptions
  * @param {String}            [simpleArgsFormat] - don't map arg to options.arg or vice versa
  * @param {String}            [arg] - name of compared value
+ * @param {Object}            [util] - reserved for validator's libraries helpers
  *
  * @constructor
  */
@@ -151,7 +152,8 @@ function Validators(params) {
         resultHandler: hiddenPropertySettings,
         exceptionHandler: hiddenPropertySettings,
         arg: hiddenPropertySettings,
-        ignoreOptionsAfterArg: hiddenPropertySettings
+        ignoreOptionsAfterArg: hiddenPropertySettings,
+        util: hiddenPropertySettings
     });
 
     this.errorFormat = {
@@ -165,6 +167,7 @@ function Validators(params) {
         return result;
     };
     this.arg = 'arg';
+    this.util = {};
 
     Object.assign(this, params);
 }
@@ -193,7 +196,7 @@ function addValidator(name, validator, params) {
             const arg2 = arguments[2];
             const _this2 = this && this._this || _this;
             const isSimpleArgsFormat = _this2[name][SIMPLE_ARGS_FORMAT] || _this2[SIMPLE_ARGS_FORMAT];
-            let options = !simpleArgsFormat && isPlainObject(arg2) ? arg2 : {};
+            let options = !isSimpleArgsFormat && isPlainObject(arg2) ? arg2 : {};
 
             if (arg1 != null && typeof arg1 !== 'boolean') {
                 if (isPlainObject(arg1) || isSimpleArgsFormat) {
