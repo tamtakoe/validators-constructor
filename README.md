@@ -206,7 +206,9 @@ validators.add({
 
 - (`Any`) - Any custom arguments
 
-- **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings (validated value is enabled as `value`, compared value - as `comparedValue`)
+- **return** (`Any`) - `undefined` if valid or error message. You can use %{template} syntax in message strings
+                        (validated value is enabled as `value`, compared value - as `comparedValue`).
+                        Also you can return promise with result of validation
 
 ```js
 validators.min(4, 5, {strict: false}); //'Should be less or equal 5'

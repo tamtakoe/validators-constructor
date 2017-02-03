@@ -1,8 +1,12 @@
 'use strict';
 
-const expect = require('chai').expect;
+const chai = require('chai');
+const expect = chai.expect;
+const chaiAsPromised = require('chai-as-promised');
 const Validators = require('../src/validators-constructor');
 let validators;
+
+chai.use(chaiAsPromised);
 
 describe('validators', function() {
 
@@ -459,5 +463,18 @@ describe('validator', function() {
         expect(error1.showError).to.be.undefined;
         expect(error2.showError).to.be.undefined;
         expect(error3.showError).to.be.undefined;
+    });
+
+    it('should understand error in the promise', function() {
+        validators.add('existsInDatabase', function(value, options, settings) {
+            return Promise.resolve('%{value} does not exist');
+        });
+
+        const promise = validators.existsInDatabase('TEST');
+
+        return expect(promise).to.be.fulfilled.then(error => {
+            expect(error.error).to.equal('existsInDatabase');
+            expect(error.message).to.equal('TEST does not exist');
+        });
     });
 });

@@ -56,48 +56,52 @@ function validatorWrapper(validators, name, validator) {
                 throw err;
             }
         }
+        
+        function handleError(error) {
+            if (error) {
+                const errorObj = typeof error === 'object' ? error : null; //in case if we rewrite message in options and want to use fields from error object in the placeholders
+                let message = options[MESSAGE] || validatorObj[MESSAGE] || validatorAliasObj[MESSAGE];
 
-        if (error) {
-            const errorObj = typeof error === 'object' ? error : null; //in case if we rewrite message in options and want to use fields from error object in the placeholders
-            let message = options[MESSAGE] || validatorObj[MESSAGE] || validatorAliasObj[MESSAGE];
-
-            if (message) {
-                error = message;
-            }
-
-            let formattedErrorMessage = validators.formatMessage(error, Object.assign(
-                {validator: alias || name, value: value}, errorObj, options
-            ));
-            let format = validatorObj[ERROR_FORMAT] || validatorAliasObj[ERROR_FORMAT] || validators[ERROR_FORMAT];
-
-            if (format) {
-                if (typeof formattedErrorMessage === 'string') {
-                    formattedErrorMessage = {message: formattedErrorMessage};
+                if (message) {
+                    error = message;
                 }
 
-                if (format.$options) {
-                    format = Object.assign({}, format);
-
-                    Object.keys(options).forEach(key => {
-                        if (!MESSAGE_REGEXP.test(key) && typeof options[key] !== 'function') {
-                            format[key] = options[key];
-                        }
-                    });
-                }
-                delete format.$options;
-
-                if (format.$origin) {
-                    format = Object.assign({}, format, formattedErrorMessage);
-                }
-                delete format.$origin;
-
-                return validators.formatMessage(format, Object.assign(
-                    {validator: alias || name, value: value}, options, formattedErrorMessage
+                let formattedErrorMessage = validators.formatMessage(error, Object.assign(
+                    {validator: alias || name, value: value}, errorObj, options
                 ));
-            }
+                let format = validatorObj[ERROR_FORMAT] || validatorAliasObj[ERROR_FORMAT] || validators[ERROR_FORMAT];
 
-            return formattedErrorMessage;
+                if (format) {
+                    if (typeof formattedErrorMessage === 'string') {
+                        formattedErrorMessage = {message: formattedErrorMessage};
+                    }
+
+                    if (format.$options) {
+                        format = Object.assign({}, format);
+
+                        Object.keys(options).forEach(key => {
+                            if (!MESSAGE_REGEXP.test(key) && typeof options[key] !== 'function') {
+                                format[key] = options[key];
+                            }
+                        });
+                    }
+                    delete format.$options;
+
+                    if (format.$origin) {
+                        format = Object.assign({}, format, formattedErrorMessage);
+                    }
+                    delete format.$origin;
+
+                    return validators.formatMessage(format, Object.assign(
+                        {validator: alias || name, value: value}, options, formattedErrorMessage
+                    ));
+                }
+
+                return formattedErrorMessage;
+            }
         }
+
+        return typeof error === 'object' && typeof error.then === 'function' ? error.then(handleError) : handleError(error);
     }
 }
 
@@ -164,9 +168,6 @@ function Validators(params) {
     };
     this.formatStr = formatStr;
     this.resultHandler = function(result) {
-        if (typeof result === 'object' && typeof result.then === 'function') {
-            result.then(result => {}, error => error);
-        }
         return result;
     };
     this.arg = 'arg';
