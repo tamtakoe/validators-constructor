@@ -1,7 +1,7 @@
 {
   "name": "validators-constructor",
   "description": "Constructor for library of validators",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "author": {
     "name": "Oleg Istomin",
     "email": "tamtakoe@gmail.com"
