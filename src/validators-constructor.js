@@ -203,11 +203,14 @@ function addValidator(name, validator, params) {
             let options = !isSimpleArgsFormat && isPlainObject(arg2) ? arg2 : {};
 
             if (arg1 != null && typeof arg1 !== 'boolean') {
-                if (isPlainObject(arg1) || isSimpleArgsFormat) {
+                if (isPlainObject(arg1)) {
                     options = arg1;
                 } else {
                     options[_this2[name][ARG] || _this2[ARG]] = arg1;
-                    args.shift();
+
+                    if (!isSimpleArgsFormat) {
+                        args.shift();
+                    }
                 }
             }
             

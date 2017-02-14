@@ -446,8 +446,8 @@ describe('validator', function() {
 
     it('should use simple arguments format', function() {
         validators.add('min', function(value, options, settings) {
-            if (settings.showError) {
-                return 'Error'
+            if (typeof options === 'object' && settings.showError) {
+                return 'Error %{arg}'
             }
         }, {
             simpleArgsFormat: true
@@ -457,9 +457,9 @@ describe('validator', function() {
         const error2 = validators.min(4, {v: 5}, {showError: true});
         const error3 = validators.min(4, {arg: 5, v: 2}, {showError: true});
 
-        expect(error1.message).to.equal('Error');
-        expect(error2.message).to.equal('Error');
-        expect(error3.message).to.equal('Error');
+        expect(error1.message).to.equal('Error 5');
+        expect(error2.message).to.equal('Error undefined');
+        expect(error3.message).to.equal('Error 5');
         expect(error1.showError).to.be.undefined;
         expect(error2.showError).to.be.undefined;
         expect(error3.showError).to.be.undefined;
