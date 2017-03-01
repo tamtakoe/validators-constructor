@@ -12,6 +12,7 @@ const EXCEPTION_HANDLER = 'exceptionHandler';
 const ERROR_FORMAT = 'errorFormat';
 const MESSAGE = 'message';
 const SIMPLE_ARGS_FORMAT = 'simpleArgsFormat';
+const ONE_OPTIONS_ARG = 'oneOptionsArg';
 const ARG = 'arg';
 
 /**
@@ -143,7 +144,8 @@ function isPlainObject(value) {
  * @param {Function}          [formatStr] - for format message strings with patterns
  * @param {Function}          [resultHandler] - handle result of validation
  * @param {Function|String}   [exceptionHandler] - handle JS exceptions
- * @param {String}            [simpleArgsFormat] - don't map arg to options.arg or vice versa
+ * @param {String}            [simpleArgsFormat] - any non object argument will be transformed to the `{arg: <argument>}`
+ * @param {String}            [oneOptionsArg] - ignore second options argument
  * @param {String}            [arg] - name of compared value
  * @param {Object}            [util] - reserved for validator's libraries helpers
  *
@@ -156,7 +158,8 @@ function Validators(params) {
         resultHandler: hiddenPropertySettings,
         exceptionHandler: hiddenPropertySettings,
         arg: hiddenPropertySettings,
-        ignoreOptionsAfterArg: hiddenPropertySettings,
+        simpleArgsFormat: hiddenPropertySettings,
+        oneOptionsArg: hiddenPropertySettings,
         util: hiddenPropertySettings
     });
 
@@ -200,8 +203,9 @@ function addValidator(name, validator, params) {
             const arg2 = arguments[2];
             const _this2 = this && this._this || _this;
             const isSimpleArgsFormat = _this2[name][SIMPLE_ARGS_FORMAT] || _this2[SIMPLE_ARGS_FORMAT];
-            let options = !isSimpleArgsFormat && isPlainObject(arg2) ? arg2 : {};
-
+            const isOneOptionsArg = _this2[name][ONE_OPTIONS_ARG] || _this2[ONE_OPTIONS_ARG];
+            let options = !isOneOptionsArg && isPlainObject(arg2) ? arg2 : {};
+            
             if (arg1 != null && typeof arg1 !== 'boolean') {
                 if (isPlainObject(arg1)) {
                     options = arg1;

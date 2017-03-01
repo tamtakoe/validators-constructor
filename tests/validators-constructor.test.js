@@ -444,13 +444,44 @@ describe('validator', function() {
         expect(error.message).to.equal('Error X');
     });
 
+    it('should use one options argument', function() {
+        validators.add('min', function(value, arg, options) {
+            if (value < arg) {
+                return 'Error %{test}'
+            }
+
+        }, {
+            oneOptionsArg: true
+        });
+
+        const error = validators.min(4, 5, {test: 5});
+        expect(error.message).to.equal('Error undefined');
+    });
+
     it('should use simple arguments format', function() {
+        validators.add('min', function(value, options) {
+            return 'Error %{arg} %{test}'
+        }, {
+            simpleArgsFormat: true
+        });
+
+        const error1 = validators.min(4, 5, {test: 'test'});
+        const error2 = validators.min(4, {v: 5}, {test: 'test'});
+        const error3 = validators.min(4, {arg: 5, v: 2}, {test: 'test'});
+
+        expect(error1.message).to.equal('Error 5 test');
+        expect(error2.message).to.equal('Error undefined undefined');
+        expect(error3.message).to.equal('Error 5 undefined');
+    });
+
+    it('should use simple arguments format and one options argument', function() {
         validators.add('min', function(value, options, settings) {
             if (typeof options === 'object' && settings.showError) {
                 return 'Error %{arg}'
             }
         }, {
-            simpleArgsFormat: true
+            simpleArgsFormat: true,
+            oneOptionsArg: true
         });
 
         const error1 = validators.min(4, 5, {showError: true});

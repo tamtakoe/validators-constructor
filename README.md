@@ -133,6 +133,7 @@ validators.isEmail(null, 3); //catch exception by default
 - **params** (`Object`)
   * arg (`String`) - name of argument for compared values. By default: `arg`
   * simpleArgsFormat (`Boolean`) - any non object argument will be transformed to the `{arg: <argument>}`
+  * oneOptionsArg (`Boolean`) - ignore second options argument `validator(value, argOrOptions, ignoredOptions)`
   * resultHandler (`Function` ) - handler of validation result. By default `function(result) { return result }`
   * exceptionHandler (`Function`) - handler of JS exceptions. By default: `null`, E.g.`function(err) { return err }` will return error message in standard format
   * formatStr (`Function`) - Custom template parser. *params:* `templateStr`, `variablesObj`. *returns:* `str`
