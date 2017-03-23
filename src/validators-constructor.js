@@ -33,7 +33,7 @@ function validatorWrapper(validators, name, validator) {
         const arg = validatorObj[ARG] || validatorAliasObj[ARG] || validators[ARG];
         const isSimpleArgsFormat = validatorObj[SIMPLE_ARGS_FORMAT] || validatorAliasObj[SIMPLE_ARGS_FORMAT] || validators[SIMPLE_ARGS_FORMAT];
 
-        options = Object.assign({}, validatorObj.defaultOptions, validatorAliasObj.defaultOptions, options);
+        options = assign({}, validatorObj.defaultOptions, validatorAliasObj.defaultOptions, options);
 
         if (typeof options.parse === 'function') {
             value = options.parse(value);
@@ -67,7 +67,7 @@ function validatorWrapper(validators, name, validator) {
                     error = message;
                 }
 
-                let formattedErrorMessage = validators.formatMessage(error, Object.assign(
+                let formattedErrorMessage = validators.formatMessage(error, assign(
                     {validator: alias || name, value: value}, errorObj, options
                 ));
                 let format = validatorObj[ERROR_FORMAT] || validatorAliasObj[ERROR_FORMAT] || validators[ERROR_FORMAT];
@@ -78,7 +78,7 @@ function validatorWrapper(validators, name, validator) {
                     }
 
                     if (format.$options) {
-                        format = Object.assign({}, format);
+                        format = assign({}, format);
 
                         Object.keys(options).forEach(key => {
                             if (!MESSAGE_REGEXP.test(key) && typeof options[key] !== 'function') {
@@ -89,11 +89,11 @@ function validatorWrapper(validators, name, validator) {
                     delete format.$options;
 
                     if (format.$origin) {
-                        format = Object.assign({}, format, formattedErrorMessage);
+                        format = assign({}, format, formattedErrorMessage);
                     }
                     delete format.$origin;
 
-                    return validators.formatMessage(format, Object.assign(
+                    return validators.formatMessage(format, assign(
                         {validator: alias || name, value: value}, options, formattedErrorMessage
                     ));
                 }
@@ -137,6 +137,22 @@ function isPlainObject(value) {
 }
 
 /**
+ * Extend objects
+ *
+ * @param {Object} first argument
+ * @param {Any} other arguments
+ *
+ * @returns {Object}
+ */
+function assign(){
+    for(let i = 1; i < arguments.length; i++)
+        for(const k in arguments[i])
+            if(arguments[i].hasOwnProperty(k))
+                arguments[0][k] = arguments[i][k];
+    return arguments[0];
+}
+
+/**
  * Validators constructor
  *
  * @param {Object}          [params]
@@ -176,7 +192,7 @@ function Validators(params) {
     this.arg = 'arg';
     this.util = {};
 
-    Object.assign(this, params);
+    assign(this, params);
 }
 
 /**
@@ -230,7 +246,7 @@ function addValidator(name, validator, params) {
 
                     case 'object':
                         validator = _this2[base[0]];
-                        options = Object.assign({}, options, base[1]);
+                        options = assign({}, options, base[1]);
                 }
 
                 var error = validator.apply(this, [value, options].concat(args));
@@ -242,7 +258,7 @@ function addValidator(name, validator, params) {
         };
     }
 
-    Object.assign(validate, params);
+    assign(validate, params);
 
     validate.curry = function(/*arg, options*/) { //Partial application
         return value => validate.apply(_this, [value].concat(Array.prototype.slice.call(arguments)));
