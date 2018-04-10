@@ -159,7 +159,7 @@ options which validator returns instead string (except options that end in Messa
 const validators = require('validators-constructor')({errorFormat: '%{message}'})
 ```
 
---
+---
 
 ### validators.add(validatorName, validator, [params]) or (validators, [params])
 
@@ -189,7 +189,7 @@ validators.add({
 })
 ```
 
---
+---
 
 ### validator(value, [arg], [options])
 
@@ -215,7 +215,7 @@ validators.add({
 validators.min(4, 5, {strict: false}); //'Should be less or equal 5'
 ```
 
---
+---
 
 ### validator.curry([arg], [options])
 
@@ -232,7 +232,7 @@ lessThen3('1234') //Length should be less then 3
 ### validator.defaultOptions
 
 ```js
-validators.url.defaultOptions = { message: 'bad url' };
+validators.min.defaultOptions = { exclusive: true, message: 'Must be more and not equal %{arg}' };
 ```
 
 
