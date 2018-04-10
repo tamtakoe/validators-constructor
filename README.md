@@ -229,6 +229,11 @@ lessThen3 = validators.maxLength.curry(3);
 lessThen3('1234') //Length should be less then 3
 ```
 
+### validator.defaultOptions
+
+```js
+validators.url.defaultOptions = { message: 'bad url' };
+```
 
 
 ## Tests
